@@ -1,0 +1,26 @@
+{
+    "name": "Varjo.XR.Editor",
+    "references": [
+      "Varjo.XR",
+      "Unity.XR.Management.Editor",
+      "Unity.XR.Management"
+    ],
+    "optionalUnityReferences": [
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.xr.management",
+            "expression": "3.2.0",
+            "define": "XR_MGMT_320"
+        }
+    ]
+}

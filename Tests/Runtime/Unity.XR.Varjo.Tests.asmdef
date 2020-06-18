@@ -1,0 +1,28 @@
+{
+    "name": "Varjo.XR.Tests",
+    "references": [
+        "UnityEngine.SpatialTracking",
+        "Varjo.XR",
+        "Unity.XR.Management",
+        "Unity.XR.InteractionSubsystems"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies",
+        "Unity.XR.Management.Tests.Standalone"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}

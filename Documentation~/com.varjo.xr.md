@@ -16,9 +16,6 @@ The input subsystem provides tracking for the HMD and hand controllers, button i
 
 A step-by-step guide for adding Varjo HMD support in a project using HDRP:
 - Open a HDRP project or create a new one using the HDRP project template.
-- Open Window -> Package Manager.
-- Click the '+' icon in the top left corner, select 'Add Package from git URL' and input the URL to the Varjo XR package repository: [git@github.com:varjocom/VarjoUnityXRPlugin.git](git@github.com:varjocom/VarjoUnityXRPlugin.git).
-Alternatively, if you want to install the package from a local copy, you can select 'Add package from disk' and navigate to the package.json file inside the Varjo XR package.
 - In 'Project Settings' -> 'XR Plug-in Management', Select 'Varjo' from the list of Plug-in providers.
 - Select the main camera, and add 'Tracked Pose Driver' component to it. Make sure it is tracking the 'Center Eye - HMD reference' pose of 'Generic XR Device'.
 
