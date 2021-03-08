@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RotateWithGaze : MonoBehaviour
 {
@@ -17,10 +15,9 @@ public class RotateWithGaze : MonoBehaviour
         mr = demoObject.GetComponent<MeshRenderer>();
     }
 
-
     void Update()
     {
-        //Check if object is rotating and change material accordingly
+        // Check if object is rotating and change material accordingly
         if (!rb.IsSleeping())
         {
             mr.material = objectMaterial;
@@ -31,7 +28,8 @@ public class RotateWithGaze : MonoBehaviour
         }
     }
 
-    public void RayHit() // Rotates object hit with gaze tracking raycast
+    // Rotates object hit with gaze tracking raycast
+    public void RayHit()
     {
         rb.AddTorque(Vector3.up * forceAmount * Time.deltaTime, ForceMode.Force);
     }

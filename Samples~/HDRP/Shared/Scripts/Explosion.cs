@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
     public float blastradius = 0.5f;
     public float explosionForce = 500f;
-    bool hasExploded = false;
 
+    bool hasExploded = false;
 
     void Explode()
     {
@@ -15,14 +13,12 @@ public class Explosion : MonoBehaviour
 
         foreach (Collider objectInRange in collidersFracturing)
         {
-
             Fracture fracture = objectInRange.GetComponent<Fracture>();
             if (fracture != null)
             {
                 fracture.Destroy();
             }
         }
-
 
         Collider[] collidersMove = Physics.OverlapSphere(transform.position, blastradius);
 

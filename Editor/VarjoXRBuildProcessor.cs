@@ -8,7 +8,9 @@ using UnityEditor.Build.Reporting;
 
 using UnityEngine;
 
-namespace Varjo.XR
+using Varjo.XR;
+
+namespace Varjo.XR.Editor
 {
     /// <summary>
     /// Simple build processor that makes sure that any custom configuration that the user creates is

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 namespace VarjoExample
 {
@@ -9,6 +6,6 @@ namespace VarjoExample
     public class Interactable : MonoBehaviour
     {
         [HideInInspector]
-        public hand activeHand = null;
+        public Hand activeHand = null;
     }
 }

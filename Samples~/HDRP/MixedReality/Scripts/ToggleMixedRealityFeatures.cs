@@ -2,7 +2,7 @@
 
 public class ToggleMixedRealityFeatures : MonoBehaviour
 {
-    public VarjoMR varjoMR;
+    public MixedRealityExample mrExample;
 
     [Header("MR feature toggle keys")]
     public KeyCode MRToggleKey = KeyCode.Alpha1;
@@ -16,9 +16,8 @@ public class ToggleMixedRealityFeatures : MonoBehaviour
 
     void Start()
     {
-        if (!varjoMR)
+        if (!mrExample)
         {
-            Debug.LogError("MixedReality not set. Disabling MixedRealityTest.");
             enabled = false;
         }
     }
@@ -30,25 +29,25 @@ public class ToggleMixedRealityFeatures : MonoBehaviour
         {
             if (Input.GetKeyDown(MRToggleKey))
             {
-                varjoMR.videoSeeThrough = !varjoMR.videoSeeThrough;
+                mrExample.videoSeeThrough = !mrExample.videoSeeThrough;
             }
             if (Input.GetKeyDown(depthEstimationToggleKey))
             {
-                varjoMR.depthEstimation = !varjoMR.depthEstimation;
+                mrExample.depthEstimation = !mrExample.depthEstimation;
             }
             if (Input.GetKeyDown(reflectionToggleKey))
             {
-                varjoMR.environmentReflections = !varjoMR.environmentReflections;
+                mrExample.environmentReflections = !mrExample.environmentReflections;
             }
             if (Input.GetKeyDown(VREyeOffsetToggleKey))
             {
-                if (varjoMR.VREyeOffset == 0f)
+                if (mrExample.VREyeOffset == 0f)
                 {
-                    varjoMR.VREyeOffset = 1.0f;
+                    mrExample.VREyeOffset = 1.0f;
                 }
                 else
                 {
-                    varjoMR.VREyeOffset = 0f;
+                    mrExample.VREyeOffset = 0f;
                 }
             }
 

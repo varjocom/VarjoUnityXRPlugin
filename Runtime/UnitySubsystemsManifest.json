@@ -6,7 +6,7 @@
   "displays": [
     {
       "id": "VarjoDisplay",
-      "disablesLegacyVr" : true
+      "disablesLegacyVr": true
     }
   ],
   "inputs": [
@@ -14,10 +14,14 @@
       "id": "VarjoInput"
     }
   ],
+  "meshings": [
+    {
+      "id": "VarjoMeshing"
+    }
+  ],
   "sessions": [
     {
       "id": "VarjoSession"
     }
   ]
-
 }

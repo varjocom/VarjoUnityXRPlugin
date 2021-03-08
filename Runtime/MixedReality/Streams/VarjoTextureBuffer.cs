@@ -113,6 +113,8 @@ namespace Varjo.XR
                     return TextureFormat.R8; // We extract only Y channel from the YUV422 for now.
                 case VarjoTextureFormat.RGBA16_FLOAT:
                     return TextureFormat.RGBAHalf;
+                case VarjoTextureFormat.NV12:
+                    return TextureFormat.R8; // We extract only Y channel from the YUV420 for now.
                 default:
                     Debug.LogErrorFormat("Texture format {0} not supported", varjoTextureFormat);
                     return TextureFormat.Alpha8;
@@ -154,7 +156,7 @@ namespace Varjo.XR
         private void LoadTextureData()
         {
             // Extract Y from YUV422.
-            if (metadata.textureFormat == VarjoTextureFormat.YUV422 && texture.format == TextureFormat.R8)
+            if ((metadata.textureFormat == VarjoTextureFormat.YUV422 || metadata.textureFormat == VarjoTextureFormat.NV12) && texture.format == TextureFormat.R8)
             {
                 // Allocate working buffer for y data.
                 if (yData == null || yData.Length != metadata.width * metadata.height * sizeof(byte))

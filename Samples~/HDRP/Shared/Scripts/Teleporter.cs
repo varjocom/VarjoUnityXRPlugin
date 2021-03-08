@@ -1,15 +1,8 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using Varjo;
 
 namespace VarjoExample
 {
-    /// <summary>
-    /// Basic teleport script by holding touchpad in the controller
-    /// </summary>
     public class Teleporter : MonoBehaviour
     {
         // Public variables to customize teleport, set in inspector
@@ -28,12 +21,10 @@ namespace VarjoExample
         // Public scene references, set in inspector
         [Header("References")]
         public Transform teleportPointer;           // Teleport pointer
-        public Transform xrRig;                 // What should we move when teleporting
-        public Transform mainCamera;               // Where is our head
+        public Transform xrRig;                     // What should we move when teleporting
+        public Transform mainCamera;                // Where is our head
         public GameObject teleportTargetPrefab;     // Visual representation of teleport target
 
-        // Private references and variables
-        //public Transform trackedObject;  // Current controller //Jani
         List<Vector3> arc = new List<Vector3>();    // List of points on the arc
         LineRenderer teleportArcRenderer;           // Arc renderer
         Transform teleportTarget;                   // Instantiated target visuals
@@ -50,9 +41,6 @@ namespace VarjoExample
         Vector3 controllerPitchEffect;              // Calculated effect of controller pitch to simulated trajectory
         Controller controller;
 
-        // Helper for getting input from SteamVR
-        // You can use get input directly like this or register to SteamVR input events
-
 
         // Get required references, sanity check references, instansiate required visuals
         void Awake()
@@ -63,8 +51,6 @@ namespace VarjoExample
             teleportTargetRenderer = teleportTarget.GetComponentInChildren<Renderer>();
         }
 
-
-
         void OnValidate()
         {
             if (pointsOnArc < 3)
@@ -74,7 +60,7 @@ namespace VarjoExample
             }
         }
 
-        // Shoot teleport arc when holding touchpad and teleport when released if possible
+        // Shoot teleport arc when holding primary button and teleport when released if possible
         void Update()
         {
             if (controller.primaryButton)
@@ -112,7 +98,7 @@ namespace VarjoExample
                     lastPoint = point;
                 }
                 // Draw arc with color indicating if the current target is valid
-                // Valid target is also indicated with a rectangle on the ground
+                // Valid target is also indicated with on the ground
                 if (canTeleport)
                 {
                     ShowArc(validTeleportColor);

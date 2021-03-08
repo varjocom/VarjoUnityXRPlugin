@@ -1,9 +1,9 @@
 {
   "name": "com.varjo.xr",
   "displayName": "Varjo XR Plugin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "unity": "2019.3",
-  "description": "Provides rendering and input support for Varjo devices using the Unity XR SDK.",
+  "description": "Provides support for Varjo devices using the Unity XR SDK.",
   "keywords": [
     "varjo",
     "xr",
@@ -13,11 +13,11 @@
     "xreditorsubsystem"
   ],
   "dependencies": {
-    "com.unity.xr.management": "3.2.10"
+    "com.unity.xr.management": "3.2.13"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:varjocom/VarjoUnityXRPlugin.git"
+    "url": "https://github.com/varjocom/VarjoUnityXRPlugin.git"
   },
   "samples": [
     {

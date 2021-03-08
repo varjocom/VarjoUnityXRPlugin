@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
+// Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
 using System.Runtime.InteropServices;
@@ -9,6 +9,7 @@ namespace Varjo.XR
 
     internal enum VarjoStreamType : long
     {
+        CameraMetadata = 0,
         DistortedColor = 1,        //!< Distorted (i.e. uncorrected) color data stream from visible light RGB camera.
         EnvironmentCubemap = 2,    //!< Lighting estimate stream as a cubemap.
     }
@@ -26,6 +27,7 @@ namespace Varjo.XR
         A8_UNORM = 4,
         YUV422 = 5,
         RGBA16_FLOAT = 6,
+        NV12 = 13,
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -51,7 +53,7 @@ namespace Varjo.XR
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct VarjoWBNormalizationData
+    internal struct WBNormalizationData
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         internal double[] wbGains;                              //!< White balance gains to convert from 6500K to VST color temperature.
@@ -68,7 +70,7 @@ namespace Varjo.XR
         internal double ev;                                     //!< EV (exposure value) at ISO100.
         internal double exposureTime;                           //!< Exposure time in seconds.
         internal double whiteBalanceTemperature;                //!< White balance temperature in Kelvin degrees.
-        internal VarjoWBNormalizationData wbNormalizationData;  //!< White balance normalization data.
+        internal WBNormalizationData wbNormalizationData;       //!< White balance normalization data.
         internal double cameraCalibrationConstant;              //!< The luminance (in cd/m^2) which saturates a pixel is equal to 2^ev * cameraCalibrationConstant.
     }
 

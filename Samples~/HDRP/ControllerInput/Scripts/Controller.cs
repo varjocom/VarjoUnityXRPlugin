@@ -6,7 +6,6 @@ using UnityEngine.Events;
 using UnityEngine.XR;
 using Varjo.XR;
 
-
 namespace VarjoExample
 {
     public class Controller : MonoBehaviour
@@ -23,10 +22,10 @@ namespace VarjoExample
         public GameObject systemButtonGameobject;
         public GameObject gripButtonGameobject;
 
-        [Header("Controller basematerial")]
+        [Header("Controller material")]
         public Material controllerMaterial;
 
-        [Header("Controller buttons highlight material")]
+        [Header("Controller button highlight material")]
         public Material buttonPressedMaterial;
         public Material touchpadTouchedMaterial;
 
@@ -40,6 +39,7 @@ namespace VarjoExample
 
         private List<InputDevice> devices = new List<InputDevice>();
         private InputDevice device;
+
         private Quaternion deviceRotation; //Controller rotation
         private Vector3 devicePosition; //Controller position
         private Vector3 deviceAngularVelocity; // Controller angular velocity
@@ -77,7 +77,7 @@ namespace VarjoExample
                 GetDevice();
             }
 
-            // Get values for device position, rotation and buttons. These are for basic Vive controller
+            // Get values for device position, rotation and buttons.
             if (device.TryGetFeatureValue(CommonUsages.devicePosition, out devicePosition))
             {
                 transform.localPosition = devicePosition;
@@ -118,15 +118,9 @@ namespace VarjoExample
                 ControllerInput();
             }
 
-            if (device.TryGetFeatureValue(CommonUsages.deviceAngularVelocity, out deviceAngularVelocity))
-            {
+            device.TryGetFeatureValue(CommonUsages.deviceAngularVelocity, out deviceAngularVelocity);
 
-            }
-
-            if (device.TryGetFeatureValue(CommonUsages.deviceVelocity, out deviceVelocity))
-            {
-
-            }
+            device.TryGetFeatureValue(CommonUsages.deviceVelocity, out deviceVelocity);
         }
 
         void GetDevice()
@@ -181,7 +175,6 @@ namespace VarjoExample
             {
                 menubuttonGameobject.GetComponent<MeshRenderer>().material = buttonPressedMaterial;
             }
-
         }
     }
 }

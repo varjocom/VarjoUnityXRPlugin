@@ -18,6 +18,13 @@ namespace Varjo.XR
         public static readonly VarjoDistortedColorStream distortedColorStream = new VarjoDistortedColorStream();
 
         /// <summary>
+        /// Metadata stream from VST cameras. This is internally the same stream as VarjoDistortedColorStream, but
+        /// without camera texture buffers. Only one of VarjoDistortedColorStream or VarjoCameraMetadataStream can be active.
+        /// Use this one if you only need the metadata to match lighting and white balance of the virtual content with the VST camera image.
+        /// </summary>
+        public static readonly VarjoCameraMetadataStream cameraMetadataStream = new VarjoCameraMetadataStream();
+
+        /// <summary>
         /// Environmental lighting cubemap stream.
         /// </summary>
         public static readonly VarjoEnvironmentCubemapStream environmentCubemapStream = new VarjoEnvironmentCubemapStream();
@@ -36,6 +43,9 @@ namespace Varjo.XR
 
         [DllImport("VarjoUnityXR")]
         private static extern void MRStopDataStream(VarjoStreamType streamType);
+
+        [DllImport("VarjoUnityXR")]
+        private static extern bool SetDepthEstimation(bool enabled);
 
         [DllImport("VarjoLib", CharSet = CharSet.Auto)]
         private static extern void varjo_MRSetVideoRender(IntPtr session, bool enabled);
@@ -169,8 +179,7 @@ namespace Varjo.XR
         public static bool EnableDepthEstimation()
         {
             if (!IsMRReady()) return false;
-            varjo_MRSetVideoDepthEstimation(GetVarjoSession(), true);
-            return CheckError();
+            return SetDepthEstimation(true);
         }
 
         /// <summary>
@@ -178,8 +187,7 @@ namespace Varjo.XR
         /// </summary>
         public static void DisableDepthEstimation()
         {
-            if (!IsMRReady()) return;
-            varjo_MRSetVideoDepthEstimation(GetVarjoSession(), false);
+            SetDepthEstimation(false);
         }
 
         /// <summary>

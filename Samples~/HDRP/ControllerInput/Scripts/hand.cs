@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace VarjoExample
 {
-    public class hand : MonoBehaviour
+    public class Hand : MonoBehaviour
     {
-        [Header("Select root of XR rig")]
         public Transform xrRig;
 
         Controller controller;
+
         public List<Interactable> contactedInteractables = new List<Interactable>();
         private bool triggerDown;
         private FixedJoint fixedJoint = null;
@@ -29,18 +29,12 @@ namespace VarjoExample
             {
                 if (!triggerDown)
                 {
-                    //Debug.Log("triggerButton Pressed");
                     triggerDown = true;
                     Pick();
-                }
-                else
-                {
-                    //Debug.Log("triggerButton Down");
                 }
             }
             else if (!controller.primary2DAxisClick && triggerDown)
             {
-                //Debug.Log("triggerButton Released");
                 triggerDown = false;
                 Drop();
             }
@@ -64,45 +58,41 @@ namespace VarjoExample
 
         public void Pick()
         {
-
-            //Get nearest object contacted
             currentInteractable = GetNearestInteractable();
 
-            //NullCheck current interactable
             if (!currentInteractable)
             {
                 return;
             }
 
-            // Check if alreadyu held
+            // Drop interactable if already held
             if (currentInteractable.activeHand)
             {
                 currentInteractable.activeHand.Drop();
             }
 
-            //attach 
+            // Attach
             heldObjectBody = currentInteractable.GetComponent<Rigidbody>();
             fixedJoint.connectedBody = heldObjectBody;
 
-            //set active hand
+            // Set active hand
             currentInteractable.activeHand = this;
         }
 
         public void Drop()
         {
-            // Null check
             if (!currentInteractable)
                 return;
 
-            //Detach
+            // Detach
             fixedJoint.connectedBody = null;
 
-            //apply velocity
+            // Apply velocity
             heldObjectBody = currentInteractable.GetComponent<Rigidbody>();
             heldObjectBody.velocity = xrRig.TransformVector(controller.DeviceVelocity);
             heldObjectBody.angularVelocity = xrRig.TransformDirection(controller.DeviceAngularVelocity);
 
-            //clear
+            // Clear
             currentInteractable.activeHand = null;
             currentInteractable = null;
         }
@@ -115,12 +105,15 @@ namespace VarjoExample
 
             foreach (Interactable interactable in contactedInteractables)
             {
-                distance = (interactable.transform.position - transform.position).sqrMagnitude;
-
-                if (distance < minDistance)
+                if (interactable)
                 {
-                    minDistance = distance;
-                    nearest = interactable;
+                    distance = (interactable.transform.position - transform.position).sqrMagnitude;
+
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        nearest = interactable;
+                    }
                 }
             }
             return nearest;

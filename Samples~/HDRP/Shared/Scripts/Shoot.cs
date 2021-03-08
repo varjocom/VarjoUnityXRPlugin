@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 
-
 namespace VarjoExample
 {
     public class Shoot : MonoBehaviour
     {
-        Controller controller;
+        public float energyFactor;
+        public GameObject projectilePrefab;
+        public Transform projectileOrigin;
+
         bool buttonDown;
         float energy;
-        public float energyFactor;
-        public GameObject projectile;
-        public Transform projectileOrigin;
+        Controller controller;
         Rigidbody rb;
-        GameObject bullet;
+        GameObject projectile;
 
         void Start()
         {
@@ -23,27 +23,32 @@ namespace VarjoExample
         {
             if (controller.Primary2DAxisClick)
             {
-                if (!buttonDown) //Button is pressed, projectile is visible
+                if (!buttonDown)
                 {
+                    // Button is pressed, projectile is created
                     buttonDown = true;
-                    bullet = Instantiate(projectile, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
-                    rb = bullet.GetComponent<Rigidbody>();
+                    projectile = Instantiate(projectilePrefab, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
+                    rb = projectile.GetComponent<Rigidbody>();
                     rb.isKinematic = true;
-                    bullet.transform.parent = projectileOrigin;
+                    projectile.transform.parent = projectileOrigin;
                 }
-                else // button is held down, projectile gets energy
+                else
                 {
+                    // Button is held down, projectile gets energy
                     energy = energy + Time.deltaTime * energyFactor;
                 }
             }
-            else if (!controller.Primary2DAxisClick && buttonDown) // Button is released, projectile is released
+            else if (!controller.Primary2DAxisClick && buttonDown)
             {
+                // Button is released, projectile is released
+                if (projectile && rb)
+                {
+                    rb.isKinematic = false;
+                    projectile.transform.parent = null;
+                    rb.AddForce(projectileOrigin.transform.forward * energy, ForceMode.Impulse);
+                }
                 buttonDown = false;
-                rb.isKinematic = false;
-                bullet.transform.parent = null;
-                rb.AddForce(projectileOrigin.transform.forward * energy, ForceMode.Impulse);
                 energy = 0f;
-
             }
         }
     }

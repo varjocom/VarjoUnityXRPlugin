@@ -3,12 +3,24 @@
     "references": [
         "Unity.XR.Management"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "",
+            "define": "HDRP"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "8.0.0",
+            "define": "HDRP_8_OR_NEWER"
+        }
+    ],
+    "noEngineReferences": false
 }

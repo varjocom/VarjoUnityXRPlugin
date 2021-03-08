@@ -11,6 +11,7 @@ public class EnableDisableControllers : MonoBehaviour
 
     XRNode XRNodeLeftHand = XRNode.LeftHand;
     XRNode XRNodeRightHand = XRNode.RightHand;
+
     private List<InputDevice> devices = new List<InputDevice>();
     private InputDevice device;
 

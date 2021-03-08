@@ -21,7 +21,6 @@ public class MarkerManager : MonoBehaviour
 
     public long markerTimeout = 3000;
     private long _markerTimeout;
-     
 
     private Transform markerTransform;
 
@@ -60,7 +59,6 @@ public class MarkerManager : MonoBehaviour
                     {
                         CreateMarkerVisualizer(marker);
                         VarjoMarkers.SetVarjoMarkerTimeout(marker.id, markerTimeout);
-                        
                     }
                 }
 
@@ -69,8 +67,6 @@ public class MarkerManager : MonoBehaviour
                     SetMarkerTimeOuts();
                     _markerTimeout = markerTimeout;
                 }
-
-                
             }
 
             VarjoMarkers.GetRemovedVarjoMarkerIds(out absentIds);
@@ -121,5 +117,5 @@ public class MarkerManager : MonoBehaviour
             VarjoMarkers.SetVarjoMarkerTimeout(markerIds[i], markerTimeout);
         }
     }
-       
+
 }
