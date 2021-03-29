@@ -2,6 +2,14 @@
 
 All notable changes to this package are documented in this file.
 
+## 2.0.1
+
+Compatible with Varjo Base 3.0 or newer.
+
+### Fixed
+
+- Fixed devices not working correctly with new input system
+
 ## 2.0.0
 
 Compatible with Varjo Base 3.0 or newer.
