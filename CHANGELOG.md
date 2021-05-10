@@ -2,6 +2,14 @@
 
 All notable changes to this package are documented in this file.
 
+## 2.1.0
+
+Compatible with Varjo Base 3.1 or newer.
+
+### Changed
+
+- Renamed input features to match common bindings.
+
 ## 2.0.1
 
 Compatible with Varjo Base 3.0 or newer.
