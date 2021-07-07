@@ -2,6 +2,16 @@
 
 All notable changes to this package are documented in this file.
 
+## 2.1.1
+
+Compatible with Varjo Base 3.2 or newer.
+
+### Fixed
+
+- Fixed VarjoRendering.GetOcclusionMeshEnabled() always returning false
+- Fixed Vive trackers not working correctly as hand held controller devices in builds
+- Fixed Vive controllers sometimes being assigned to wrong hands
+
 ## 2.1.0
 
 Compatible with Varjo Base 3.1 or newer.
