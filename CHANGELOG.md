@@ -2,6 +2,20 @@
 
 All notable changes to this package are documented in this file.
 
+## 2.2.0
+
+Compatible with Varjo Base 3.3 or newer.
+
+### Removed
+
+- Removed experimental 3D reconstruction support
+
+### Fixed
+
+- Fixed warped frame after calling XRGeneralSettings.Instance.Manager.StopSubsystems()
+- Fixed GUIDs in tests conflicting with other XR SDK plugins
+- Fixed VST mask in HDRP samples for Unity 2020 and newer
+
 ## 2.1.1
 
 Compatible with Varjo Base 3.2 or newer.
@@ -18,7 +32,7 @@ Compatible with Varjo Base 3.1 or newer.
 
 ### Changed
 
-- Renamed input features to match common bindings.
+- Renamed input features to match common bindings
 
 ## 2.0.1
 
