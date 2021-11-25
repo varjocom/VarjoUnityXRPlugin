@@ -2,6 +2,14 @@
 
 All notable changes to this package are documented in this file.
 
+## 2.2.1
+
+Compatible with Varjo Base 3.3.1 or newer.
+
+### Fixed
+
+- Fixed occlusion mask being upside down when using HDRP with Unity 2019
+
 ## 2.2.0
 
 Compatible with Varjo Base 3.3 or newer.

@@ -44,8 +44,10 @@ namespace Varjo.XR
 
 #if !HDRP || HDRP_8_OR_NEWER
                 uds.checkSinglePassValue = 1;
+                uds.flipOcclusionMesh = 0;
 #else
                 uds.checkSinglePassValue = 0;
+                uds.flipOcclusionMesh = 1;
 #endif
 
                 switch (settings.StereoRenderingMode)
@@ -109,6 +111,7 @@ namespace Varjo.XR
             public double depthTestFarZ;
             public ushort checkSinglePassValue;
             public ushort useTextureArrays;
+            public ushort flipOcclusionMesh;
         }
 
         [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
