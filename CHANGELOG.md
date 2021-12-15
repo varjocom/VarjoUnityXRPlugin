@@ -2,6 +2,34 @@
 
 All notable changes to this package are documented in this file.
 
+## 2.3.0
+
+Compatible with Varjo Base 3.4 or newer.
+
+### Added
+
+- Proper error handling
+- Support for controller haptics
+- Function to get Varjo session pointer
+- New hasNewFrame boolean for mixed reality streams to inform if the stream has received a new frame since the last GetFrame
+- Inline documentation for public methods and custom types
+- Documentation link in the Package Manager
+
+### Changed
+
+- Invalid float parameter in VarjoRendering setting functions is now returning an error instead of silently clamping the value
+- Fixed foveated rendering is now used as a fallback when foveated rendering is enabled but no gaze data is available
+- By default use eye tracking data poll rate equal to fastest rate supported by connected headset (i.e. 200Hz for XR-3, VR-3 devices, and 100Hz for earlier devices)
+
+### Removed
+
+- Removed unit tests from the plugin package
+
+### Fixed
+
+- Fixed eye tracking not working if "Allow eye tracking" was enabled in Varjo Base after the plugin was loaded
+- Fixed VarjoTextureBuffer using deprecated Texture2D.Resize() on Unity 2021.2 or newer
+
 ## 2.2.1
 
 Compatible with Varjo Base 3.3.1 or newer.

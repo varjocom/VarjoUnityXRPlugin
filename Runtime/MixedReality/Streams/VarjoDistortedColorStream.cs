@@ -1,18 +1,28 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
+// Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
 using UnityEngine;
 
 namespace Varjo.XR
 {
+    /// <summary>
+    /// Varjo Distorted Color Stream
+    /// </summary>
     public class VarjoDistortedColorStream : VarjoFrameStream
     {
+        /// <summary>
+        /// Varjo Distorted Color Frame
+        /// </summary>
         public class VarjoDistortedColorFrame
         {
-            public long timestamp { get; internal set; }                   //!< Timestamp at end of exposure.
-            public VarjoCameraMetadata metadata { get; internal set; }     //!< Camera metadata
-            public Texture2D leftTexture { get; internal set; }            //!< Texture from left camera.
-            public Texture2D rightTexture { get; internal set; }           //!< Texture from right camera.
+            /** <summary>Timestamp at end of exposure.</summary> */
+            public long timestamp { get; internal set; }
+            /** <summary>Camera metadata</summary> */
+            public VarjoCameraMetadata metadata { get; internal set; }
+            /** <summary>Texture from left camera.</summary> */
+            public Texture2D leftTexture { get; internal set; }
+            /** <summary>Texture from right camera.</summary> */
+            public Texture2D rightTexture { get; internal set; }
         }
 
         private VarjoDistortedColorData data;
@@ -35,11 +45,15 @@ namespace Varjo.XR
         {
             lock (mutex)
             {
+                if (!hasReceivedData) return new VarjoDistortedColorFrame();
+
                 var frame = new VarjoDistortedColorFrame();
                 frame.timestamp = data.timestamp;
                 frame.metadata = new VarjoCameraMetadata(data);
                 frame.leftTexture = leftBuffer.GetTexture2D();
                 frame.rightTexture = rightBuffer.GetTexture2D();
+
+                hasNewFrame = false;
                 return frame;
             }
         }
@@ -67,6 +81,8 @@ namespace Varjo.XR
 
                 leftBuffer.UpdateBuffer(leftBufferId);
                 rightBuffer.UpdateBuffer(rightBufferId);
+                hasReceivedData = true;
+                hasNewFrame = true;
             }
         }
 

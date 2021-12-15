@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
+// Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
 using System.IO;
@@ -17,6 +17,7 @@ namespace Varjo.XR
         private byte[] yData;
         private bool changed;
         private bool invertRowOrder;
+        private int byteSize;
 
         internal VarjoTextureBuffer(bool invertRowOrder)
         {
@@ -51,9 +52,11 @@ namespace Varjo.XR
                     return;
                 }
 
-                if (data == null || data.Length != metadata.byteSize)
+                byteSize = metadata.width * metadata.height * GetUnityTextureBytesPerPixel(metadata.textureFormat);
+
+                if (data == null || data.Length != byteSize)
                 {
-                    data = new byte[metadata.byteSize];
+                    data = new byte[byteSize];
                 }
 
                 CopyCpuData(metadata, cpuData, invertRowOrder);
@@ -88,7 +91,11 @@ namespace Varjo.XR
                 }
                 else if (texture.width != width || texture.height != height)
                 {
+#if UNITY_2021_2_OR_NEWER
+                    texture.Reinitialize(width, height, format, false);
+#else
                     texture.Resize(width, height, format, false);
+#endif
                 }
 
                 LoadTextureData();
@@ -113,6 +120,10 @@ namespace Varjo.XR
                     return TextureFormat.R8; // We extract only Y channel from the YUV422 for now.
                 case VarjoTextureFormat.RGBA16_FLOAT:
                     return TextureFormat.RGBAHalf;
+                case VarjoTextureFormat.R8G8B8A8_UNORM:
+                    return TextureFormat.RGBA32;
+                case VarjoTextureFormat.R32_FLOAT:
+                    return TextureFormat.RFloat;
                 case VarjoTextureFormat.NV12:
                     return TextureFormat.R8; // We extract only Y channel from the YUV420 for now.
                 default:
@@ -121,19 +132,37 @@ namespace Varjo.XR
             }
         }
 
+        private int GetUnityTextureBytesPerPixel(VarjoTextureFormat varjoTextureFormat)
+        {
+            TextureFormat textureFormat = GetTextureFormat(varjoTextureFormat);
+            switch (textureFormat)
+            {
+                case TextureFormat.RGBA32:
+                case TextureFormat.BGRA32:
+                case TextureFormat.RFloat:
+                    return 4;
+                case TextureFormat.RGBAHalf:
+                    return 8;
+                case TextureFormat.Alpha8:
+                case TextureFormat.R8:
+                default:
+                    return 1;
+            }
+        }
+
         private void CopyCpuData(VarjoBufferMetadata metadata, IntPtr cpuBuffer, bool invertRowOrder)
         {
-            int height = (int)metadata.height;
-            int rowStride = (int)metadata.rowStride;
-            int byteSize = (int)metadata.byteSize;
+            int height = metadata.height;
+            int rowStride = metadata.rowStride;
+            int destRowStride = byteSize / height;
 
             if (invertRowOrder)
             {
                 for (int srcRow = 0; srcRow < height; ++srcRow)
                 {
                     long srcOffset = cpuBuffer.ToInt64() + srcRow * rowStride;
-                    int destOffset = (height - srcRow - 1) * rowStride;
-                    Marshal.Copy(new IntPtr(srcOffset), data, destOffset, rowStride);
+                    int destOffset = (height - srcRow - 1) * destRowStride;
+                    Marshal.Copy(new IntPtr(srcOffset), data, destOffset, destRowStride);
                 }
 
                 // YUV422 contains a second plane for UV.
@@ -142,14 +171,27 @@ namespace Varjo.XR
                     for (int srcRow = 0; srcRow < height; ++srcRow)
                     {
                         long srcOffset = cpuBuffer.ToInt64() + (srcRow + height) * rowStride;
-                        int destOffset = (2 * height - srcRow - 1) * rowStride;
-                        Marshal.Copy(new IntPtr(srcOffset), data, destOffset, rowStride);
+                        int destOffset = (2 * height - srcRow - 1) * destRowStride;
+                        Marshal.Copy(new IntPtr(srcOffset), data, destOffset, destRowStride);
                     }
                 }
             }
             else
             {
-                Marshal.Copy(cpuBuffer, data, 0, byteSize);
+                if (rowStride == destRowStride)
+                {
+                    Marshal.Copy(cpuBuffer, data, 0, byteSize);
+                }
+                else
+                {
+                    // If row strides are not equal length, copy row by row.
+                    for (int srcRow = 0; srcRow < height; ++srcRow)
+                    {
+                        long srcOffset = cpuBuffer.ToInt64() + srcRow * rowStride;
+                        int destOffset = srcRow * destRowStride;
+                        Marshal.Copy(new IntPtr(srcOffset), data, destOffset, destRowStride);
+                    }
+                }
             }
         }
 
@@ -159,9 +201,9 @@ namespace Varjo.XR
             if ((metadata.textureFormat == VarjoTextureFormat.YUV422 || metadata.textureFormat == VarjoTextureFormat.NV12) && texture.format == TextureFormat.R8)
             {
                 // Allocate working buffer for y data.
-                if (yData == null || yData.Length != metadata.width * metadata.height * sizeof(byte))
+                if (yData == null || yData.Length != byteSize)
                 {
-                    yData = new byte[metadata.width * metadata.height * sizeof(byte)];
+                    yData = new byte[byteSize];
                 }
 
                 // Copy data row by row since we need to change the stride.
@@ -179,7 +221,6 @@ namespace Varjo.XR
                 // Other formats can be copied as-is.
                 texture.LoadRawTextureData(data);
             }
-
             texture.Apply();
         }
     }

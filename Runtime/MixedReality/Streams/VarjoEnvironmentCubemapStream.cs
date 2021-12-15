@@ -1,16 +1,24 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
+// Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
 using UnityEngine;
 
 namespace Varjo.XR
 {
+    /// <summary>
+    /// Varjo Environment Cubemap Stream
+    /// </summary>
     public class VarjoEnvironmentCubemapStream : VarjoFrameStream
     {
+        /// <summary>
+        /// Varjo Environment Cubemap Frame
+        /// </summary>
         public class VarjoEnvironmentCubemapFrame
         {
-            public long timestamp { get; internal set; }  // Timestamp at end of exposure.
-            public Cubemap cubemap { get; internal set; } // Environmental lighting cubemap.
+            /** <summary>Timestamp at end of exposure.</summary> */
+            public long timestamp { get; internal set; }
+            /** <summary>Environmental lighting cubemap.</summary> */
+            public Cubemap cubemap { get; internal set; }
         }
 
         private VarjoEnvironmentCubemapData data;
@@ -32,10 +40,14 @@ namespace Varjo.XR
         {
             lock (mutex)
             {
+                if (!hasReceivedData) return new VarjoEnvironmentCubemapFrame();
+
                 var frame = new VarjoEnvironmentCubemapFrame();
                 frame.timestamp = data.timestamp;
                 UpdateCubemap();
                 frame.cubemap = cubemap;
+
+                hasNewFrame = false;
                 return frame;
             }
         }
@@ -54,6 +66,8 @@ namespace Varjo.XR
                     return;
                 }
                 buffer.UpdateBuffer(bufferId);
+                hasReceivedData = true;
+                hasNewFrame = true;
             }
         }
 

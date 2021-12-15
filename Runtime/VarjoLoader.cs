@@ -21,6 +21,8 @@ namespace Varjo.XR
         public XRInputSubsystem inputSubsystem => GetLoadedSubsystem<XRInputSubsystem>();
         public override bool Initialize()
         {
+            InitializePluginInstance();
+
             // Send the settings over to the native plugin
             VarjoSettings settings = GetSettings();
             if (settings != null)
@@ -88,6 +90,8 @@ namespace Varjo.XR
             DestroySubsystem<XRInputSubsystem>();
             DestroySubsystem<XRDisplaySubsystem>();
 
+            ShutdownPluginInstance();
+
             return true;
         }
 
@@ -116,6 +120,12 @@ namespace Varjo.XR
 
         [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
         private static extern void SetUserDefinedSettings(UserDefinedSettings settings);
+
+        [DllImport("VarjoUnityXR")]
+        private static extern void InitializePluginInstance();
+
+        [DllImport("VarjoUnityXR")]
+        private static extern void ShutdownPluginInstance();
 
         public VarjoSettings GetSettings()
         {

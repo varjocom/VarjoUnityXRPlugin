@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
+// Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
 using System.Collections.Generic;
@@ -29,105 +29,15 @@ namespace Varjo.XR
         /// </summary>
         public static readonly VarjoEnvironmentCubemapStream environmentCubemapStream = new VarjoEnvironmentCubemapStream();
 
-        [DllImport("VarjoUnityXR")]
-        public static extern bool IsMRAvailable();
-
-        [DllImport("VarjoUnityXR")]
-        private static extern IntPtr GetVarjoSession();
-
-        [DllImport("VarjoUnityXR")]
-        private static extern bool MRSupportsDataStream(VarjoStreamType streamType);
-
-        [DllImport("VarjoUnityXR")]
-        private static extern bool MRStartDataStream(VarjoStreamType streamType, VarjoStreamCallback callback, IntPtr userdata);
-
-        [DllImport("VarjoUnityXR")]
-        private static extern void MRStopDataStream(VarjoStreamType streamType);
-
-        [DllImport("VarjoUnityXR")]
-        private static extern bool SetDepthEstimation(bool enabled);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRSetVideoRender(IntPtr session, bool enabled);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRSetVideoDepthEstimation(IntPtr session, bool enabled);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRSetVRViewOffset(IntPtr session, double percentage);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_LockDataStreamBuffer(IntPtr session, long id);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_UnlockDataStreamBuffer(IntPtr session, long id);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern VarjoCameraIntrinsics varjo_GetCameraIntrinsics(IntPtr session, long id, long frameNumber, long channelIndex);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern VarjoMatrix varjo_GetCameraExtrinsics(IntPtr session, long id, long frameNumber, long index);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern long varjo_GetBufferId(IntPtr session, long id, long frameNumber, long index);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern VarjoBufferMetadata varjo_GetBufferMetadata(IntPtr session, long id);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern VarjoTexture varjo_GetBufferGPUData(IntPtr session, long id);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern IntPtr varjo_GetBufferCPUData(IntPtr session, long id);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern int varjo_Lock(IntPtr session, long lockType);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_Unlock(IntPtr session, long lockType);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern int varjo_MRGetCameraPropertyModeCount(IntPtr session, VarjoCameraPropertyType prop);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRGetCameraPropertyModes(IntPtr session, VarjoCameraPropertyType prop, [In, Out] VarjoCameraPropertyMode[] modes, int maxSize);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern long varjo_MRGetCameraPropertyMode(IntPtr session, VarjoCameraPropertyType type);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRSetCameraPropertyMode(IntPtr session, VarjoCameraPropertyType type, VarjoCameraPropertyMode mode);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern long varjo_MRGetCameraPropertyConfigType(IntPtr session, VarjoCameraPropertyType prop);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern int varjo_MRGetCameraPropertyValueCount(IntPtr session, VarjoCameraPropertyType prop);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern int varjo_MRGetCameraPropertyValues(IntPtr session, VarjoCameraPropertyType prop, [In, Out] VarjoCameraPropertyValue[] values, int maxSize);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern VarjoCameraPropertyValue varjo_MRGetCameraPropertyValue(IntPtr session, VarjoCameraPropertyType type);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRSetCameraPropertyValue(IntPtr session, VarjoCameraPropertyType type, ref VarjoCameraPropertyValue value);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRResetCameraProperty(IntPtr session, VarjoCameraPropertyType type);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern void varjo_MRResetCameraProperties(IntPtr session);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern int varjo_GetError(IntPtr session);
-
-        [DllImport("VarjoLib", CharSet = CharSet.Auto)]
-        private static extern string varjo_GetErrorDesc(int errorCode);
+        /// <summary>
+        /// Is Mixed Reality capable hardware present.
+        /// </summary>
+        /// <returns>True if present.</returns>
+        public static bool IsMRAvailable() { return Native.IsMRAvailable(); }
 
         private static bool IsMRReady()
         {
-            if (GetVarjoSession() == IntPtr.Zero)
+            if (Varjo.GetVarjoSession() == IntPtr.Zero)
             {
                 return false;
             }
@@ -141,17 +51,6 @@ namespace Varjo.XR
             return true;
         }
 
-        private static bool CheckError()
-        {
-            int error = varjo_GetError(GetVarjoSession());
-            if (error != 0)
-            {
-                Debug.LogWarning(varjo_GetErrorDesc(error));
-                return false;
-            }
-            return true;
-        }
-
         /// <summary>
         /// Starts video see-through rendering.
         /// </summary>
@@ -159,8 +58,8 @@ namespace Varjo.XR
         public static bool StartRender()
         {
             if (!IsMRReady()) return false;
-            varjo_MRSetVideoRender(GetVarjoSession(), true);
-            return CheckError();
+            Native.varjo_MRSetVideoRender(Varjo.GetVarjoSession(), true);
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -169,7 +68,7 @@ namespace Varjo.XR
         public static void StopRender()
         {
             if (!IsMRReady()) return;
-            varjo_MRSetVideoRender(GetVarjoSession(), false);
+            Native.varjo_MRSetVideoRender(Varjo.GetVarjoSession(), false);
         }
 
         /// <summary>
@@ -179,7 +78,13 @@ namespace Varjo.XR
         public static bool EnableDepthEstimation()
         {
             if (!IsMRReady()) return false;
-            return SetDepthEstimation(true);
+            if (!Native.SetDepthEstimation(true))
+            {
+                VarjoError.CheckError();
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -187,39 +92,44 @@ namespace Varjo.XR
         /// </summary>
         public static void DisableDepthEstimation()
         {
-            SetDepthEstimation(false);
+            if (!Native.SetDepthEstimation(false))
+            {
+                VarjoError.CheckError();
+            }
         }
 
         /// <summary>
         /// Change virtual camera rendering position between users eyes and video see through cameras.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// The scene is rendered twice from the position of the users eyes. In full VR the eye position corresponds to the physical
         /// position of the users eyes. When using video see through there is a physical offset between the users eyes and the
         /// stereo camera pair. So in contrast to full VR, when rendering in MR mode: To remove stereo disparity problems between the
         /// real and virtual world and prevent 'floating' of the VR objects anchored to the real world, the scene should be rendered
         /// from the physical position of the camera pair in most cases. This is the default mode and corresponds to setting eye offset
         /// 'percentage' to 1.0.
-        ///
+        /// </para>
+        /// <para>
         /// But there can be scenes that are predominantly VR where it makes sense to render the scene using the VR eye position.
         /// e.g. The scene only contains a small 'magic window' to view the real world or the real world is only shown as a backdrop.
-        ///
+        /// </para>
+        /// <para>
         /// This function can be used to switch the rendering position. It can be used for smooth interpolated change in case it
         /// needs to be done the middle of the scene.
-        ///
+        /// </para>
+        /// <para>
         /// Note: This setting is ignored if eye reprojection is enabled (#varjo_CameraPropertyType_EyeReprojection). In this case
         /// the rendering is always done from the users eye position (full VR position, corresponds to 'percentage' 0.0).
+        /// </para>
         /// </remarks>
-        /// <param name="session">
-        /// Varjo session handle.
-        /// </param>
         /// <param name="percentage">
         ///  [0.0, 1.0] Linear interpolation of the rendering position between the position of HMD users eyes and the video see through camera position.
         /// </param>
         public static void SetVRViewOffset(double percentage)
         {
             if (!IsMRReady()) return;
-            varjo_MRSetVRViewOffset(GetVarjoSession(), percentage);
+            Native.varjo_MRSetVRViewOffset(Varjo.GetVarjoSession(), percentage);
         }
 
         /// <summary>
@@ -230,7 +140,7 @@ namespace Varjo.XR
         public static bool LockCameraConfig()
         {
             if (!IsMRReady()) return false;
-            return (varjo_Lock(GetVarjoSession(), VARJO_LOCKTYPE_CAMERA) == 1);
+            return (Native.varjo_Lock(Varjo.GetVarjoSession(), VARJO_LOCKTYPE_CAMERA) == 1);
         }
 
         /// <summary>
@@ -240,7 +150,7 @@ namespace Varjo.XR
         public static void UnlockCameraConfig()
         {
             if (!IsMRReady()) return;
-            varjo_Unlock(GetVarjoSession(), VARJO_LOCKTYPE_CAMERA);
+            Native.varjo_Unlock(Varjo.GetVarjoSession(), VARJO_LOCKTYPE_CAMERA);
         }
 
         /// <summary>
@@ -251,7 +161,7 @@ namespace Varjo.XR
         public static int GetCameraPropertyModeCount(VarjoCameraPropertyType type)
         {
             if (!IsMRReady()) return 0;
-            return varjo_MRGetCameraPropertyModeCount(GetVarjoSession(), type);
+            return Native.varjo_MRGetCameraPropertyModeCount(Varjo.GetVarjoSession(), type);
         }
 
         /// <summary>
@@ -270,9 +180,9 @@ namespace Varjo.XR
 
             int count = GetCameraPropertyModeCount(type);
             VarjoCameraPropertyMode[] modesArray = new VarjoCameraPropertyMode[count];
-            varjo_MRGetCameraPropertyModes(GetVarjoSession(), type, modesArray, count);
+            Native.varjo_MRGetCameraPropertyModes(Varjo.GetVarjoSession(), type, modesArray, count);
             modes = modesArray.ToList();
-            return CheckError();
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -289,8 +199,8 @@ namespace Varjo.XR
                 return false;
             }
 
-            mode = (VarjoCameraPropertyMode)varjo_MRGetCameraPropertyMode(GetVarjoSession(), type);
-            return CheckError();
+            mode = (VarjoCameraPropertyMode)Native.varjo_MRGetCameraPropertyMode(Varjo.GetVarjoSession(), type);
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -302,8 +212,8 @@ namespace Varjo.XR
         public static bool SetCameraPropertyMode(VarjoCameraPropertyType type, VarjoCameraPropertyMode mode)
         {
             if (!IsMRReady()) return false;
-            varjo_MRSetCameraPropertyMode(GetVarjoSession(), type, mode);
-            return CheckError();
+            Native.varjo_MRSetCameraPropertyMode(Varjo.GetVarjoSession(), type, mode);
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -321,8 +231,8 @@ namespace Varjo.XR
                 return false;
             }
 
-            configType = (VarjoCameraPropertyConfigType)varjo_MRGetCameraPropertyConfigType(GetVarjoSession(), prop);
-            return CheckError();
+            configType = (VarjoCameraPropertyConfigType)Native.varjo_MRGetCameraPropertyConfigType(Varjo.GetVarjoSession(), prop);
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -333,7 +243,7 @@ namespace Varjo.XR
         public static int GetCameraPropertyValueCount(VarjoCameraPropertyType type)
         {
             if (!IsMRReady()) return 0;
-            return varjo_MRGetCameraPropertyValueCount(GetVarjoSession(), type);
+            return Native.varjo_MRGetCameraPropertyValueCount(Varjo.GetVarjoSession(), type);
         }
 
         /// <summary>
@@ -352,9 +262,9 @@ namespace Varjo.XR
 
             int count = GetCameraPropertyValueCount(type);
             VarjoCameraPropertyValue[] valueArray = new VarjoCameraPropertyValue[count];
-            varjo_MRGetCameraPropertyValues(GetVarjoSession(), type, valueArray, count);
+            Native.varjo_MRGetCameraPropertyValues(Varjo.GetVarjoSession(), type, valueArray, count);
             values = valueArray.ToList();
-            return CheckError();
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -371,8 +281,8 @@ namespace Varjo.XR
                 return false;
             }
 
-            value = varjo_MRGetCameraPropertyValue(GetVarjoSession(), type);
-            return CheckError();
+            value = Native.varjo_MRGetCameraPropertyValue(Varjo.GetVarjoSession(), type);
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -384,8 +294,8 @@ namespace Varjo.XR
         public static bool SetCameraPropertyValue(VarjoCameraPropertyType type, VarjoCameraPropertyValue value)
         {
             if (!IsMRReady()) return false;
-            varjo_MRSetCameraPropertyValue(GetVarjoSession(), type, ref value);
-            return CheckError();
+            Native.varjo_MRSetCameraPropertyValue(Varjo.GetVarjoSession(), type, ref value);
+            return VarjoError.CheckError();
         }
 
         /// <summary>
@@ -395,7 +305,7 @@ namespace Varjo.XR
         public static void ResetCameraProperty(VarjoCameraPropertyType type)
         {
             if (!IsMRReady()) return;
-            varjo_MRResetCameraProperty(GetVarjoSession(), type);
+            Native.varjo_MRResetCameraProperty(Varjo.GetVarjoSession(), type);
         }
 
         /// <summary>
@@ -404,7 +314,7 @@ namespace Varjo.XR
         public static void ResetCameraProperties()
         {
             if (!IsMRReady()) return;
-            varjo_MRResetCameraProperties(GetVarjoSession());
+            Native.varjo_MRResetCameraProperties(Varjo.GetVarjoSession());
         }
 
         internal static bool GetDataStreamBufferId(long streamId, long frameNumber, long channelIndex, out long bufferId)
@@ -414,8 +324,8 @@ namespace Varjo.XR
                 bufferId = -1;
                 return false;
             }
-            bufferId = varjo_GetBufferId(GetVarjoSession(), streamId, frameNumber, channelIndex);
-            return CheckError();
+            bufferId = Native.varjo_GetBufferId(Varjo.GetVarjoSession(), streamId, frameNumber, channelIndex);
+            return VarjoError.CheckError();
         }
 
         internal static bool LockDataStreamBuffer(long id)
@@ -424,8 +334,8 @@ namespace Varjo.XR
             {
                 return false;
             }
-            varjo_LockDataStreamBuffer(GetVarjoSession(), id);
-            return CheckError();
+            Native.varjo_LockDataStreamBuffer(Varjo.GetVarjoSession(), id);
+            return VarjoError.CheckError();
         }
 
         internal static bool GetBufferMetadata(long id, out VarjoBufferMetadata metadata)
@@ -435,8 +345,8 @@ namespace Varjo.XR
                 metadata = new VarjoBufferMetadata();
                 return false;
             }
-            metadata = varjo_GetBufferMetadata(GetVarjoSession(), id);
-            return CheckError();
+            metadata = Native.varjo_GetBufferMetadata(Varjo.GetVarjoSession(), id);
+            return VarjoError.CheckError();
         }
 
         internal static bool GetBufferCPUData(long id, out IntPtr cpuData)
@@ -446,8 +356,8 @@ namespace Varjo.XR
                 cpuData = IntPtr.Zero;
                 return false;
             }
-            cpuData = varjo_GetBufferCPUData(GetVarjoSession(), id);
-            return CheckError();
+            cpuData = Native.varjo_GetBufferCPUData(Varjo.GetVarjoSession(), id);
+            return VarjoError.CheckError();
         }
 
         internal static bool GetBufferGPUData(long id, out VarjoTexture gpuData)
@@ -457,32 +367,149 @@ namespace Varjo.XR
                 gpuData = new VarjoTexture();
                 return false;
             }
-            gpuData = varjo_GetBufferGPUData(GetVarjoSession(), id);
-            return CheckError();
+            gpuData = Native.varjo_GetBufferGPUData(Varjo.GetVarjoSession(), id);
+            return VarjoError.CheckError();
         }
 
         internal static void UnlockDataStreamBuffer(long id)
         {
             if (!IsMRReady()) return;
-            varjo_UnlockDataStreamBuffer(GetVarjoSession(), id);
+            Native.varjo_UnlockDataStreamBuffer(Varjo.GetVarjoSession(), id);
         }
 
         internal static bool SupportsDataStream(VarjoStreamType type)
         {
             if (!IsMRReady()) return false;
-            return MRSupportsDataStream(type);
+            return Native.MRSupportsDataStream(type);
         }
 
         internal static bool StartDataStream(VarjoStreamType type, VarjoStreamCallback callback)
         {
             if (!IsMRReady()) return false;
-            return MRStartDataStream(type, callback, IntPtr.Zero);
+            if (!Native.MRStartDataStream(type, callback, IntPtr.Zero))
+            {
+                VarjoError.CheckError();
+                return false;
+            }
+
+            return true;
         }
 
         internal static void StopDataStream(VarjoStreamType type)
         {
             if (!IsMRReady()) return;
-            MRStopDataStream(type);
+            Native.MRStopDataStream(type);
+        }
+
+        internal static VarjoStreamConfig GetStreamConfig(VarjoStreamType streamType)
+        {
+            return Native.GetStreamConfig(streamType);
+        }
+
+        internal static VarjoCameraIntrinsics GetCameraIntrinsics(long id, long frameNumber, long channelIndex)
+        {
+            return Native.varjo_GetCameraIntrinsics(Varjo.GetVarjoSession(), id, frameNumber, channelIndex);
+        }
+
+        internal static VarjoMatrix GetCameraExtrinsics(long id, long frameNumber, long channelIndex)
+        {
+            return Native.varjo_GetCameraExtrinsics(Varjo.GetVarjoSession(), id, frameNumber, channelIndex);
+        }
+
+        /// <summary>
+        /// Native interface functions
+        /// </summary>
+        private class Native
+        {
+            [DllImport("VarjoUnityXR")]
+            public static extern bool IsMRAvailable();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern bool MRSupportsDataStream(VarjoStreamType streamType);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern bool MRStartDataStream(VarjoStreamType streamType, VarjoStreamCallback callback, IntPtr userdata);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRStopDataStream(VarjoStreamType streamType);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern VarjoStreamConfig GetStreamConfig(VarjoStreamType streamType);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern bool SetDepthEstimation(bool enabled);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRSetVideoRender(IntPtr session, bool enabled);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRSetVideoDepthEstimation(IntPtr session, bool enabled);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRSetVRViewOffset(IntPtr session, double percentage);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_LockDataStreamBuffer(IntPtr session, long id);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_UnlockDataStreamBuffer(IntPtr session, long id);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern VarjoCameraIntrinsics varjo_GetCameraIntrinsics(IntPtr session, long id, long frameNumber, long channelIndex);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern VarjoMatrix varjo_GetCameraExtrinsics(IntPtr session, long id, long frameNumber, long index);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern long varjo_GetBufferId(IntPtr session, long id, long frameNumber, long index);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern VarjoBufferMetadata varjo_GetBufferMetadata(IntPtr session, long id);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern VarjoTexture varjo_GetBufferGPUData(IntPtr session, long id);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern IntPtr varjo_GetBufferCPUData(IntPtr session, long id);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern int varjo_Lock(IntPtr session, long lockType);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_Unlock(IntPtr session, long lockType);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern int varjo_MRGetCameraPropertyModeCount(IntPtr session, VarjoCameraPropertyType prop);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRGetCameraPropertyModes(IntPtr session, VarjoCameraPropertyType prop, [In, Out] VarjoCameraPropertyMode[] modes, int maxSize);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern long varjo_MRGetCameraPropertyMode(IntPtr session, VarjoCameraPropertyType type);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRSetCameraPropertyMode(IntPtr session, VarjoCameraPropertyType type, VarjoCameraPropertyMode mode);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern long varjo_MRGetCameraPropertyConfigType(IntPtr session, VarjoCameraPropertyType prop);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern int varjo_MRGetCameraPropertyValueCount(IntPtr session, VarjoCameraPropertyType prop);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern int varjo_MRGetCameraPropertyValues(IntPtr session, VarjoCameraPropertyType prop, [In, Out] VarjoCameraPropertyValue[] values, int maxSize);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern VarjoCameraPropertyValue varjo_MRGetCameraPropertyValue(IntPtr session, VarjoCameraPropertyType type);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRSetCameraPropertyValue(IntPtr session, VarjoCameraPropertyType type, ref VarjoCameraPropertyValue value);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRResetCameraProperty(IntPtr session, VarjoCameraPropertyType type);
+
+            [DllImport("VarjoLib", CharSet = CharSet.Auto)]
+            public static extern void varjo_MRResetCameraProperties(IntPtr session);
         }
     }
 }

@@ -5,22 +5,38 @@ using UnityEngine;
 
 namespace Varjo.XR
 {
+    /// <summary>
+    /// Varjo WB Normalization Data
+    /// </summary>
     public class VarjoWBNormalizationData
     {
-        public Color wbGains;       //!< White balance gains to convert from 6500K to VST color temperature.
-        public Matrix4x4 invCCM;    //!< Inverse CCM for 6500K.
-        public Matrix4x4 ccm;       //!< CCM for VST color temperature.
+        /** <summary>White balance gains to convert from 6500K to VST color temperature.</summary> */
+        public Color wbGains;
+        /** <summary>Inverse CCM for 6500K.</summary> */
+        public Matrix4x4 invCCM;
+        /** <summary>CCM for VST color temperature.</summary> */
+        public Matrix4x4 ccm;
     }
 
+    /// <summary>
+    /// Varjo Camera Metadata.
+    /// </summary>
     public class VarjoCameraMetadata
     {
-        public double ev { get; internal set; }                        //!< EV (exposure value) at ISO100.
-        public double exposureTime { get; internal set; }              //!< Exposure time in seconds.
-        public double whiteBalanceTemperature { get; internal set; }   //!< White balance temperature in Kelvin degrees.
-        public VarjoWBNormalizationData wbNormalizationData { get; internal set; } // White balance normalization data.
-        public Texture2D leftTexture { get; internal set; }            //!< Texture from left camera.
-        public Texture2D rightTexture { get; internal set; }           //!< Texture from right camera.
-        public double cameraCalibrationConstant { get; internal set; } //!< The luminance (in cd/m^2) which saturates a pixel is equal to 2^ev * cameraCalibrationConstant.
+        /** <summary>EV (exposure value) at ISO100.</summary> */
+        public double ev { get; internal set; }
+        /** <summary>Exposure time in seconds.</summary> */
+        public double exposureTime { get; internal set; }
+        /** <summary>White balance temperature in Kelvin degrees.</summary> */
+        public double whiteBalanceTemperature { get; internal set; }
+        /** <summary>White balance normalization data.</summary> */
+        public VarjoWBNormalizationData wbNormalizationData { get; internal set; }
+        /** <summary>Texture from left camera.</summary> */
+        public Texture2D leftTexture { get; internal set; }
+        /** <summary>Texture from right camera.</summary> */
+        public Texture2D rightTexture { get; internal set; }
+        /** <summary>The luminance (in cd/m^2) which saturates a pixel is equal to 2^ev * cameraCalibrationConstant.</summary> */
+        public double cameraCalibrationConstant { get; internal set; }
 
         private VarjoDistortedColorData data;
 

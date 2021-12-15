@@ -1,16 +1,24 @@
-﻿// Copyright 2019 Varjo Technologies Oy. All rights reserved.
+// Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
 using UnityEngine;
 
 namespace Varjo.XR
 {
+    /// <summary>
+    /// Varjo Camera Metadata Stream
+    /// </summary>
     public class VarjoCameraMetadataStream : VarjoFrameStream
     {
+        /// <summary>
+        /// Varjo Camera Metadata Frame
+        /// </summary>
         public class VarjoCameraMetadataFrame
         {
-            public long timestamp { get; internal set; }                   //!< Timestamp at end of exposure.
-            public VarjoCameraMetadata metadata { get; internal set; }     //!< Camera metadata
+            /** <summary>Timestamp at end of exposure.</summary> */
+            public long timestamp { get; internal set; }
+            /** <summary>Camera metadata.</summary> */
+            public VarjoCameraMetadata metadata { get; internal set; }
         }
 
         private VarjoDistortedColorData data;
@@ -25,9 +33,13 @@ namespace Varjo.XR
         {
             lock (mutex)
             {
+                if (!hasReceivedData) return new VarjoCameraMetadataFrame();
+
                 var frame = new VarjoCameraMetadataFrame();
                 frame.timestamp = data.timestamp;
                 frame.metadata = new VarjoCameraMetadata(data);
+
+                hasNewFrame = false;
                 return frame;
             }
         }
@@ -38,6 +50,8 @@ namespace Varjo.XR
             {
                 Debug.Assert(streamData.type == VarjoStreamType.DistortedColor);
                 data = streamData.metadata.distortedColorData;
+                hasReceivedData = true;
+                hasNewFrame = true;
             }
         }
 

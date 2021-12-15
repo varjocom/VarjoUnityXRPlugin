@@ -12,6 +12,9 @@ using System.Runtime.InteropServices;
 
 namespace Varjo.XR
 {
+    /// <summary>
+    /// Event Type
+    /// </summary>
     public enum EventType
     {
         EVENT_VISIBILITY = 1,
@@ -23,6 +26,10 @@ namespace Varjo.XR
         EVENT_DATA_STREAM_START = 10,
         EVENT_DATA_STREAM_STOP = 11,
     }
+
+    /// <summary>
+    /// MR Device Status
+    /// </summary>
     public enum MRDeviceStatus : long
     {
         Connected = 1,
@@ -32,59 +39,96 @@ namespace Varjo.XR
     [StructLayout(LayoutKind.Sequential)]
     public struct EventBase
     {
+        /** <summary>Type of the event.</summary> */
         public ulong type;
+        /** <summary>Timestamp of the time when the event was issued.</summary> */
         public long timeStamp;
     }
 
+    /// <summary>
+    /// Visibility event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventVisibility
     {
+        /** <summary>Current visibility.</summary> */
         public uint visible;
     }
 
+    /// <summary>
+    /// Button event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventButton
     {
+        /** <summary>Is the button pressed down.</summary> */
         public uint pressed;
+        /** <summary>Id of the button.</summary> */
         public byte buttonId;
     }
 
+    /// <summary>
+    /// Headset standby status event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventHeadsetStandbyStatus
     {
+        /** <summary>Is the headset on standby.</summary> */
         public uint onStandby;
     }
 
+    /// <summary>
+    /// Foreground status event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventForeground
     {
         public uint isForeground;
     }
 
+    /// <summary>
+    /// Mixed reality device status event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventMRDeviceStatus
     {
+        /** <summary>Is there a mixed reality capable device connected.</summary> */
         public MRDeviceStatus status;
     }
 
+    /// <summary>
+    /// Camera property change event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventMRCameraPropertyChange
     {
+        /** <summary>Changed property.</summary> */
         public VarjoCameraPropertyType type;
     }
 
+    /// <summary>
+    /// Data stream start event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventDataStreamStart
     {
+        /** <summary>Stream id.</summary> */
         public long streamId;
     }
 
+    /// <summary>
+    /// Data stream stop event data.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct EventDataStreamStop
     {
+        /** <summary>Stream id.</summary> */
         public long streamId;
     }
 
+    /// <summary>
+    /// Varjo Event Manager
+    /// </summary>
     public class VarjoEventManager : MonoBehaviour
     {
         private static VarjoEventManager _instance = null;
@@ -126,17 +170,51 @@ namespace Varjo.XR
         public delegate void DataStreamStopEvent(long streamId);
         public static event DataStreamStopEvent OnDataStreamStopEvent;
 
-        [DllImport("VarjoUnityXR")]
-        private static extern IntPtr GetVarjoSession();
-
+        /// <summary>
+        /// Poll Event.
+        /// </summary>
+        /// <param name="eventType">Type of the event.</param>
+        /// <returns>True if has event.</returns>
         [DllImport("VarjoUnityXR")] public static extern bool PollEvent(ref ulong eventType);
+        /// <summary>
+        /// Get Visibility Data of polled event.
+        /// </summary>
+        /// <returns>Visibility of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventVisibility GetEventVisibility();
+        /// <summary>
+        /// Get button data of polled event.
+        /// </summary>
+        /// <returns>EventButton of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventButton GetEventButton();
+        /// <summary>
+        /// Get EventHeadsetStandbyStatus.
+        /// </summary>
+        /// <returns>EventHeadsetStandbyStatus of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventHeadsetStandbyStatus GetEventHeadsetStandbyStatus();
+        /// <summary>
+        /// Get EventForeground.
+        /// </summary>
+        /// <returns>EventForeground of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventForeground GetEventForeground();
+        /// <summary>
+        /// Get EventMRDeviceStatus.
+        /// </summary>
+        /// <returns>EventMRDeviceStatus of ppolled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventMRDeviceStatus GetEventMRDeviceStatus();
+        /// <summary>
+        /// Get EventMRCameraPropertyChange
+        /// </summary>
+        /// <returns>EventMRCameraPropertyChange of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventMRCameraPropertyChange GetEventMRCameraPropertyChange();
+        /// <summary>
+        /// Get EventDataStreamStart
+        /// </summary>
+        /// <returns>EventDataStreamStart of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventDataStreamStart GetEventDataStreamStart();
+        /// <summary>
+        /// Get EventDataStreamStop
+        /// </summary>
+        /// <returns>EventDataStreamStop of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventDataStreamStop GetEventDataStreamStop();
 
         /// <summary>
@@ -173,7 +251,7 @@ namespace Varjo.XR
 
         private void Update()
         {
-            if (GetVarjoSession() == IntPtr.Zero)
+            if (Varjo.GetVarjoSession() == IntPtr.Zero)
             {
                 return;
             }

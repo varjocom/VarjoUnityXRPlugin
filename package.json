@@ -1,9 +1,11 @@
 {
   "name": "com.varjo.xr",
   "displayName": "Varjo XR Plugin",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "unity": "2019.3",
   "description": "Provides support for Varjo devices using the Unity XR SDK.",
+  "documentationUrl": "https://developer.varjo.com/docs/unity-xr-sdk/unity-xr-sdk",
+  "license": "See LICENSE.md file.",
   "keywords": [
     "varjo",
     "xr",

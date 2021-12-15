@@ -7,19 +7,52 @@ namespace Varjo.XR
 {
     internal delegate void VarjoStreamCallback(VarjoStreamFrame frame, IntPtr userdata);
 
-    internal enum VarjoStreamType : long
+    /// <summary>
+    /// Varjo Stream Type.
+    /// </summary>
+    public enum VarjoStreamType : long
     {
         CameraMetadata = 0,
-        DistortedColor = 1,        //!< Distorted (i.e. uncorrected) color data stream from visible light RGB camera.
-        EnvironmentCubemap = 2,    //!< Lighting estimate stream as a cubemap.
+        /** <summary>Distorted (i.e. uncorrected) color data stream from visible light RGB camera.</summary>*/
+        DistortedColor = 1,
+        /** <summary>Lighting estimate stream as a cubemap.</summary> */
+        EnvironmentCubemap = 2,
     }
 
-    internal enum VarjoCalibrationModel : long
+    /// <summary>
+    /// Varjo Channel Flags.
+    /// </summary>
+    [Flags]
+    public enum VarjoChannelFlags: ulong
     {
-        Omnidir = 1,        //!< Omnidir calibration model.
+        None = 0,
+        First = 1,
+        Second = 2,
+        All = ulong.MaxValue
     }
 
-    internal enum VarjoTextureFormat : long
+    /// <summary>
+    /// Varjo Buffer Type.
+    /// </summary>
+    public enum VarjoBufferType : long
+    {
+        CPU = 1,
+        GPU = 2,
+    }
+
+    /// <summary>
+    /// Varjo Calibration Model.
+    /// </summary>
+    public enum VarjoCalibrationModel : long
+    {
+        /** <summary>Omnidir calibration model.</summary> */
+        Omnidir = 1,
+    }
+
+    /// <summary>
+    /// Varjo Texture Format
+    /// </summary>
+    public enum VarjoTextureFormat : long
     {
         R8G8B8A8_SRGB = 1,
         B8G8R8A8_SRGB = 2,
@@ -27,7 +60,37 @@ namespace Varjo.XR
         A8_UNORM = 4,
         YUV422 = 5,
         RGBA16_FLOAT = 6,
+        R8G8B8A8_UNORM = 9,
+        R32_FLOAT = 10,
         NV12 = 13,
+    }
+
+    /// <summary>
+    /// Varjo Stream Config.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct VarjoStreamConfig
+    {
+        /** <summary>Id.</summary> */
+        public long streamId;
+        /** <summary>Bitfield of provided camera channels.</summary> */
+        public VarjoChannelFlags channelFlags;
+        /** <summary>Stream type.</summary> */
+        public VarjoStreamType streamType;
+        /** <summary>Buffer type: CPU or GPU memory buffer.</summary> */
+        public VarjoBufferType bufferType;
+        /** <summary>Texture format.</summary> */
+        public VarjoTextureFormat format;
+        /** <summary>Transform from HMD pose center to stream origin in view coordinates.</summary> */
+        public VarjoMatrix streamTransform;
+        /** <summary>Frame rate in frames per second</summary> */
+        public int frameRate;
+        /** <summary>Texture width.</summary> */
+        public int width;
+        /** <summary>Texture height;</summary> */
+        public int height;
+        /** <summary>Buffer row stride in bytes.</summary> */
+        public int rowStride;
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -39,14 +102,22 @@ namespace Varjo.XR
         internal VarjoEnvironmentCubemapData environmentCubemapData;
     }
 
+    [Flags]
+    internal enum VarjoDataFlags : ulong
+    {
+        Buffer = 1,
+        Intrinsics = 2,
+        Extrinsics = 4,
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct VarjoStreamFrame
     {
         internal VarjoStreamType type; //!< Type of the stream.
         internal long id;              //!< Id of the stream.
         internal long frameNumber;     //!< Monotonically increasing frame number.
-        internal long channelFlags;    //!< Channels that this frame contains.
-        internal long dataFlags;       //!< Data that this frame contains.
+        internal VarjoChannelFlags channelFlags;    //!< Channels that this frame contains.
+        internal VarjoDataFlags dataFlags;       //!< Data that this frame contains.
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         internal double[] hmdPose;     //!< Pose at the time when the frame was produced.
         internal VarjoStreamFrameMetadata metadata; //!< Frame data. Use 'type' to determine which element to access.
@@ -92,7 +163,7 @@ namespace Varjo.XR
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct VarjoCameraIntrinsics
+    internal struct VarjoCameraIntrinsics
     {
         internal VarjoCalibrationModel model;       //!< Intrisics calibration model.
         internal double principalPointX;            //!< Camera principal point X.
