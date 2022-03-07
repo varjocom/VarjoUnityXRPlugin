@@ -72,13 +72,41 @@ namespace Varjo.XR
             /** <summary>Gaze ray for the left eye.</summary> */
             public GazeRay left;
             /** <summary>Pupil size for the left eye, calculated according to the pupil size range detected by the headset. Values are between 0 and 1.</summary> */
+            [Obsolete("Use information from EyeMeasurements structure")]
             public float leftPupilSize;
             /** <summary>A status for the right eye.</summary> */
             public GazeEyeStatus rightStatus;
             /** <summary>Gaze ray for the right eye.</summary> */
             public GazeRay right;
             /** <summary>Pupil size for the right eye, calculated according to the pupil size range detected by the headset. Values are between 0 and 1.</summary> */
+            [Obsolete("Use information from EyeMeasurements structure")]
             public float rightPupilSize;
+        }
+
+        /// <summary>
+        /// Gaze tracker estimates of user's eye measurements.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct EyeMeasurements
+        {
+            /** <summary>A unique identifier of the frame at the time when the data was recorded.</summary> */
+            public long frameNumber;
+            /** <summary>A timestamp, in nanoseconds, of when the video frame was recorded by the eye tracking cameras.</summary> */
+            public long captureTime;
+            /** <summary>Estimate of user's IPD in mm.</summary> */
+            public float interPupillaryDistanceInMM;
+            /** <summary>Ratio of left pupil diameter to iris diameter. 0 when either pupil or iris estimate is not available.</summary> */
+            public float leftPupilIrisDiameterRatio;
+            /** <summary>Pupil diameter estimate for the left eye, measured in mm. 0 if estimate is not available.</summary> */
+            public float leftPupilDiameterInMM;
+            /** <summary>Iris diameter estimate for the left eye, measured in mm. 0 if estimate is not available.</summary> */
+            public float leftIrisDiameterInMM;
+            /** <summary>Ratio of rigth pupil diameter to iris diameter. 0 when either pupil or iris estimate is not available.</summary> */
+            public float rightPupilIrisDiameterRatio;
+            /** <summary>Pupil diameter estimate for the right eye, measured in mm. 0 if estimate is not available.</summary> */
+            public float rightPupilDiameterInMM;
+            /** <summary>Iris diameter estimate for the right eye, measured in mm. 0 if estimate is not available.</summary> */
+            public float rightIrisDiameterInMM;
         }
 
         /// <summary>
@@ -202,6 +230,12 @@ namespace Varjo.XR
         public static GazeData GetGaze() { return Native.GetGaze(); }
 
         /// <summary>
+        /// Returns the latest eye measurements.
+        /// </summary>
+        /// <returns>The latest eye measurements.</returns>
+        public static EyeMeasurements GetEyeMeasurements() { return Native.GetEyeMeasurements(); }
+
+        /// <summary>
         /// Requests a HMD gaze calibration with provided parameters.
         /// </summary>
         /// <remarks>
@@ -224,51 +258,40 @@ namespace Varjo.XR
             return VarjoError.CheckError();
         }
 
-        [ObsoleteAttribute("Use GazeOutputFilterType instead.", false)]
-        public enum GazeOutputFilterMode
-        {
-            Standard,
-            None
-        }
-
-        [ObsoleteAttribute("Use RequestGazeCalibration(GazeCalibrationMode calibrationMode) instead and set the output filter mode with SetOutputFilterMode(GazeOutputFilterMode outputFilterMode).", false)]
-        public static bool RequestGazeCalibration(GazeCalibrationMode calibrationMode, GazeOutputFilterMode outputFilterMode)
-        {
-            string calibrationModeValue = "Fast";
-            if (calibrationMode == GazeCalibrationMode.Legacy)
-                calibrationModeValue = "Legacy";
-
-            string outputFilterModeValue = "Standard";
-            if (outputFilterMode == GazeOutputFilterMode.None)
-                outputFilterModeValue = "None";
-
-            Native.GazeCalibrationParameter[] parameters = new Native.GazeCalibrationParameter[] {
-                new Native.GazeCalibrationParameter { key = "GazeCalibrationType", value = calibrationModeValue },
-                new Native.GazeCalibrationParameter { key = "OutputFilterType", value = outputFilterModeValue }};
-
-            Native.RequestGazeCalibrationWithParameters(parameters, parameters.Length);
-            return VarjoError.CheckError();
-        }
-
         /// <summary>
-        /// Get Gaze List.
+        /// Pulls most recent gaze data from the queue.
         /// </summary>
-        /// <param name="gazeData">Gaze Data list to fill.</param>
+        /// <param name="gazeData">On output contains list of GazeData items.</param>
         /// <returns>Size of gazeData list</returns>
         public static int GetGazeList(out List<GazeData> gazeData)
         {
-            int gazeDataCount = Native.FetchGazeData();
-            if (gazeDataCount == 0)
+            return GetGazeList(out gazeData, out _);
+        }
+
+        /// <summary>
+        /// Pulls most recent gaze data and eye measurements from the queue.
+        /// </summary>
+        /// <param name="gazeData">On output contains list of GazeData items.</param>
+        /// <param name="eyeMeasurements">On output contains list of EyeMeasurements items.</param>
+        /// <returns>Size of gazeData list</returns>
+        public static int GetGazeList(out List<GazeData> gazeData, out List<EyeMeasurements> eyeMeasurements)
+        {
+            int itemCount = Native.FetchGazeData();
+            if (itemCount == 0)
             {
                 VarjoError.CheckError();
                 gazeData = new List<GazeData>();
+                eyeMeasurements = new List<EyeMeasurements>();
                 return 0;
             }
 
-            GazeData[] gazeDataArray = new GazeData[gazeDataCount];
-            Native.GetGazeArray(gazeDataArray, gazeDataCount);
+            GazeData[] gazeDataArray = new GazeData[itemCount];
+            EyeMeasurements[] eyeMeasurementsArray = new EyeMeasurements[itemCount];
+            Native.GetGazeArray(gazeDataArray, eyeMeasurementsArray, itemCount);
+
             gazeData = gazeDataArray.ToList();
-            return gazeDataCount;
+            eyeMeasurements = eyeMeasurementsArray.ToList();
+            return itemCount;
         }
 
         /// <summary>
@@ -310,10 +333,13 @@ namespace Varjo.XR
             public static extern GazeData GetGaze();
 
             [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
+            public static extern EyeMeasurements GetEyeMeasurements();
+
+            [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
             public static extern int FetchGazeData();
 
             [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
-            public static extern bool GetGazeArray(GazeData[] gazeData, int gazeDataCount);
+            public static extern bool GetGazeArray(GazeData[] gazeArray, EyeMeasurements[] eyeMeasurementsArray, int maxSize);
 
             [StructLayout(LayoutKind.Sequential)]
             public struct GazeCalibrationParameter

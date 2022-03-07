@@ -21,7 +21,7 @@ namespace Varjo.XR
             public VarjoCameraMetadata metadata { get; internal set; }
         }
 
-        private VarjoDistortedColorData data;
+        private DistortedColorFrameMetadata data;
 
         /// <summary>
         /// Gets latest frame from the frame stream.

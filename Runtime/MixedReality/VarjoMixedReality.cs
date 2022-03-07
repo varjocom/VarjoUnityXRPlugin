@@ -13,18 +13,6 @@ namespace Varjo.XR
         private const long VARJO_LOCKTYPE_CAMERA = 1;
 
         /// <summary>
-        /// Distorted color stream from VST cameras.
-        /// </summary>
-        public static readonly VarjoDistortedColorStream distortedColorStream = new VarjoDistortedColorStream();
-
-        /// <summary>
-        /// Metadata stream from VST cameras. This is internally the same stream as VarjoDistortedColorStream, but
-        /// without camera texture buffers. Only one of VarjoDistortedColorStream or VarjoCameraMetadataStream can be active.
-        /// Use this one if you only need the metadata to match lighting and white balance of the virtual content with the VST camera image.
-        /// </summary>
-        public static readonly VarjoCameraMetadataStream cameraMetadataStream = new VarjoCameraMetadataStream();
-
-        /// <summary>
         /// Environmental lighting cubemap stream.
         /// </summary>
         public static readonly VarjoEnvironmentCubemapStream environmentCubemapStream = new VarjoEnvironmentCubemapStream();
@@ -35,7 +23,11 @@ namespace Varjo.XR
         /// <returns>True if present.</returns>
         public static bool IsMRAvailable() { return Native.IsMRAvailable(); }
 
-        private static bool IsMRReady()
+        /// <summary>
+        /// Is Mixed Reality Ready
+        /// </summary>
+        /// <returns>True if Plugin Instance was initialized and MixedReality hardware is available.</returns>
+        public static bool IsMRReady()
         {
             if (Varjo.GetVarjoSession() == IntPtr.Zero)
             {
@@ -386,13 +378,7 @@ namespace Varjo.XR
         internal static bool StartDataStream(VarjoStreamType type, VarjoStreamCallback callback)
         {
             if (!IsMRReady()) return false;
-            if (!Native.MRStartDataStream(type, callback, IntPtr.Zero))
-            {
-                VarjoError.CheckError();
-                return false;
-            }
-
-            return true;
+            return Native.MRStartDataStream(type, callback, IntPtr.Zero);
         }
 
         internal static void StopDataStream(VarjoStreamType type)

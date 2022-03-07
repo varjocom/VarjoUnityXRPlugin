@@ -7,9 +7,11 @@ namespace Varjo.XR
 {
     public abstract class VarjoFrameStream
     {
+        private VarjoStreamConfig _config;
+
         public bool isActive { get; internal set; }
         public bool hasNewFrame { get; internal set; }
-        public VarjoStreamConfig config { get; internal set; }
+        public ref readonly VarjoStreamConfig configRef => ref _config;
         protected readonly object mutex;
         private VarjoStreamCallback callback;
         private protected bool hasReceivedData;
@@ -39,8 +41,12 @@ namespace Varjo.XR
                 return true;
             }
             callback = new VarjoStreamCallback(NewFrameCallback);
-            config = VarjoMixedReality.GetStreamConfig(StreamType);
+            _config = VarjoMixedReality.GetStreamConfig(StreamType);
             isActive = VarjoMixedReality.StartDataStream(StreamType, callback);
+            if (!isActive)
+            {
+                VarjoError.CheckError();
+            }
             hasNewFrame = false;
             return isActive;
         }

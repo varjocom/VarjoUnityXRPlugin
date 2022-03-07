@@ -12,6 +12,18 @@ The display subsystem provides stereo rendering support for the XR Plugin.
 
 The input subsystem provides tracking for the HMD and hand controllers, button inputs from the HMD and contollers and eye tracking. 
 
+### Session
+
+The session subsystem provides information about mixed reality feature availability.
+
+### Camera
+
+The camera subsystem allows controlling video see-through cameras and accessing the camera streams. 
+
+### Occlusion
+
+The occlusion subsystem allows controlling the environment depth occlusion. 
+
 ## Getting started
 
 - Create or open a Unity project. See [Unity XR SDK Compatibility page](https://developer.varjo.com/docs/unity-xr-sdk/compatibility) for compatible Unity editor and render pipeline versions.
@@ -38,6 +50,10 @@ The scene is rendered in 4 separate passes, one for each view (left context, rig
 #### Two Pass
 
 The scene is rendered in 2 passes: one 2-wide instanced stereo rendering pass for context displays and another for the focus displays.
+
+#### Stereo
+
+The scene is rendered in one two-wide instanced stereo rendering pass for the context displays. Focus views are not rendered and foveated rendering is disabled.
 
 ### Separate Cull Pass For Focus Displays
 

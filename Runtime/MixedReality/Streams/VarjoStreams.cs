@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Varjo.XR
 {
@@ -97,7 +98,7 @@ namespace Varjo.XR
     internal struct VarjoStreamFrameMetadata
     {
         [FieldOffset(0)]
-        internal VarjoDistortedColorData distortedColorData;
+        internal DistortedColorFrameMetadata distortedColorData;
         [FieldOffset(0)]
         internal VarjoEnvironmentCubemapData environmentCubemapData;
     }
@@ -135,7 +136,7 @@ namespace Varjo.XR
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct VarjoDistortedColorData
+    internal struct DistortedColorFrameMetadata
     {
         internal long timestamp;                                //!< Timestamp at end of exposure.
         internal double ev;                                     //!< EV (exposure value) at ISO100.
@@ -155,7 +156,7 @@ namespace Varjo.XR
     internal struct VarjoBufferMetadata
     {
         internal VarjoTextureFormat textureFormat;  //!< Texture format.
-        internal long bufferType;                   //!< CPU or GPU.
+        internal VarjoBufferType bufferType;        //!< CPU or GPU.
         internal int byteSize;                      //!< Buffer size in bytes.
         internal int rowStride;                     //!< Buffer row stride in bytes.
         internal int width;                         //!< Image width.
@@ -186,4 +187,20 @@ namespace Varjo.XR
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public double[] value;
     };
+
+    //!< Intrinsics model coefficients. For omnidir: 2 radial, skew, xi, 2 tangential.
+    public struct VarjoDistortionCoefficients
+    {
+        public Vector4 K { get; }
+        public Vector2 Kr { get; }
+        public Vector2 P { get; }
+
+        public VarjoDistortionCoefficients(Vector4 K, Vector2 Kr, Vector2 P)
+        {
+            this.K = K;
+            this.Kr = Kr;
+            this.P = P;
+        }
+    };
+
 }

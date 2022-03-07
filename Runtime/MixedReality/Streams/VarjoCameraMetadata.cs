@@ -31,18 +31,13 @@ namespace Varjo.XR
         public double whiteBalanceTemperature { get; internal set; }
         /** <summary>White balance normalization data.</summary> */
         public VarjoWBNormalizationData wbNormalizationData { get; internal set; }
-        /** <summary>Texture from left camera.</summary> */
-        public Texture2D leftTexture { get; internal set; }
-        /** <summary>Texture from right camera.</summary> */
-        public Texture2D rightTexture { get; internal set; }
+
         /** <summary>The luminance (in cd/m^2) which saturates a pixel is equal to 2^ev * cameraCalibrationConstant.</summary> */
         public double cameraCalibrationConstant { get; internal set; }
 
-        private VarjoDistortedColorData data;
-
-        internal VarjoCameraMetadata (VarjoDistortedColorData distortedColorData)
+        internal VarjoCameraMetadata (DistortedColorFrameMetadata distortedColorData)
         {
-            data = distortedColorData;
+            DistortedColorFrameMetadata data = distortedColorData;
             ev = data.ev;
             exposureTime = data.exposureTime;
             whiteBalanceTemperature = data.whiteBalanceTemperature;

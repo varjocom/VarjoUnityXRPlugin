@@ -2,11 +2,11 @@
 // Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Experimental.XR;
+using System.Runtime.InteropServices;
+using UnityEngine.XR.ARSubsystems;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
-using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Varjo.XR
 {
@@ -14,14 +14,32 @@ namespace Varjo.XR
     {
         private static List<XRDisplaySubsystemDescriptor> s_DisplaySubsystemDescriptors =
             new List<XRDisplaySubsystemDescriptor>();
+        private static List<XROcclusionSubsystemDescriptor> s_OcclusionSubsystemDescriptors =
+            new List<XROcclusionSubsystemDescriptor>();
         private static List<XRInputSubsystemDescriptor> s_InputSubsystemDescriptors =
             new List<XRInputSubsystemDescriptor>();
+        private static List<XRSessionSubsystemDescriptor> s_SessionSubsystemDescriptors =
+            new List<XRSessionSubsystemDescriptor>();
+        private static List<XRCameraSubsystemDescriptor> s_CameraSubsystemDescriptors =
+            new List<XRCameraSubsystemDescriptor>();
 
         public XRDisplaySubsystem displaySubsystem => GetLoadedSubsystem<XRDisplaySubsystem>();
         public XRInputSubsystem inputSubsystem => GetLoadedSubsystem<XRInputSubsystem>();
+        public XRSessionSubsystem sessionSubsystem => GetLoadedSubsystem<XRSessionSubsystem>();
+        public XRCameraSubsystem cameraSubsystem => GetLoadedSubsystem<XRCameraSubsystem>();
+        public XROcclusionSubsystem occlusionSubsystem => GetLoadedSubsystem<XROcclusionSubsystem>();
+
         public override bool Initialize()
         {
-            InitializePluginInstance();
+            if(!Varjo.IsVarjoSystemInstalled())
+            {
+                return false;
+            }
+
+            if (!InitializePluginInstance())
+            {
+                return false;
+            }
 
             // Send the settings over to the native plugin
             VarjoSettings settings = GetSettings();
@@ -44,14 +62,6 @@ namespace Varjo.XR
                 uds.depthTestNearZ = settings.DepthTestNearZ;
                 uds.depthTestFarZ = settings.DepthTestFarZ;
 
-#if !HDRP || HDRP_8_OR_NEWER
-                uds.checkSinglePassValue = 1;
-                uds.flipOcclusionMesh = 0;
-#else
-                uds.checkSinglePassValue = 0;
-                uds.flipOcclusionMesh = 1;
-#endif
-
                 switch (settings.StereoRenderingMode)
                 {
                     default:
@@ -59,6 +69,7 @@ namespace Varjo.XR
                         uds.useTextureArrays = 0;
                         break;
                     case VarjoStereoRenderingMode.TwoPass:
+                    case VarjoStereoRenderingMode.Stereo:
                         uds.useTextureArrays = 1;
                         break;
                 }
@@ -67,6 +78,9 @@ namespace Varjo.XR
 
             CreateSubsystem<XRDisplaySubsystemDescriptor, XRDisplaySubsystem>(s_DisplaySubsystemDescriptors, "VarjoDisplay");
             CreateSubsystem<XRInputSubsystemDescriptor, XRInputSubsystem>(s_InputSubsystemDescriptors, "VarjoInput");
+            CreateSubsystem<XRSessionSubsystemDescriptor, XRSessionSubsystem>(s_SessionSubsystemDescriptors, VarjoSessionSubsystem.VarjoSessionID);
+            CreateSubsystem<XRCameraSubsystemDescriptor, XRCameraSubsystem>(s_CameraSubsystemDescriptors, VarjoCameraSubsystem.VarjoCameraID);
+            CreateSubsystem<XROcclusionSubsystemDescriptor, XROcclusionSubsystem>(s_OcclusionSubsystemDescriptors, VarjoOcclusionSubsystem.VarjoOcclusionID);
             return true;
         }
 
@@ -74,6 +88,7 @@ namespace Varjo.XR
         {
             StartSubsystem<XRDisplaySubsystem>();
             StartSubsystem<XRInputSubsystem>();
+            StartSubsystem<XRSessionSubsystem>();
             return true;
         }
 
@@ -81,7 +96,7 @@ namespace Varjo.XR
         {
             StopSubsystem<XRInputSubsystem>();
             StopSubsystem<XRDisplaySubsystem>();
-
+            StopSubsystem<XRSessionSubsystem>();
             return true;
         }
 
@@ -89,6 +104,7 @@ namespace Varjo.XR
         {
             DestroySubsystem<XRInputSubsystem>();
             DestroySubsystem<XRDisplaySubsystem>();
+            DestroySubsystem<XRSessionSubsystem>();
 
             ShutdownPluginInstance();
 
@@ -113,16 +129,14 @@ namespace Varjo.XR
             public ushort depthTestRange;
             public double depthTestNearZ;
             public double depthTestFarZ;
-            public ushort checkSinglePassValue;
             public ushort useTextureArrays;
-            public ushort flipOcclusionMesh;
         }
 
         [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
         private static extern void SetUserDefinedSettings(UserDefinedSettings settings);
 
         [DllImport("VarjoUnityXR")]
-        private static extern void InitializePluginInstance();
+        private static extern bool InitializePluginInstance();
 
         [DllImport("VarjoUnityXR")]
         private static extern void ShutdownPluginInstance();

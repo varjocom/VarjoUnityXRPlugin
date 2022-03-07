@@ -25,6 +25,9 @@ public class EyeTrackingExample : MonoBehaviour
     public VarjoEyeTracking.GazeOutputFilterType gazeOutputFilterType = VarjoEyeTracking.GazeOutputFilterType.Standard;
     public KeyCode setOutputFilterTypeKey = KeyCode.RightShift;
 
+    [Header("Gaze data output frequency")]
+    public VarjoEyeTracking.GazeOutputFrequency frequency;
+
     [Header("Toggle gaze target visibility")]
     public KeyCode toggleGazeTarget = KeyCode.Return;
 
@@ -65,11 +68,15 @@ public class EyeTrackingExample : MonoBehaviour
     public bool useCustomLogPath = false;
     public string customLogPath = "";
 
+    [Header("Print gaze data framerate while logging.")]
+    public bool printFramerate = false;
+
     private List<InputDevice> devices = new List<InputDevice>();
     private InputDevice device;
     private Eyes eyes;
     private VarjoEyeTracking.GazeData gazeData;
     private List<VarjoEyeTracking.GazeData> dataSinceLastUpdate;
+    private List<VarjoEyeTracking.EyeMeasurements> eyeMeasurementsSinceLastUpdate;
     private Vector3 leftEyePosition;
     private Vector3 rightEyePosition;
     private Quaternion leftEyeRotation;
@@ -82,9 +89,12 @@ public class EyeTrackingExample : MonoBehaviour
     private StreamWriter writer = null;
     private bool logging = false;
 
-    private static readonly string[] ColumnNames = { "Frame", "CaptureTime", "LogTime", "HMDPosition", "HMDRotation", "GazeStatus", "CombinedGazeForward", "CombinedGazePosition", "LeftEyeStatus", "LeftEyeForward", "LeftEyePosition", "LeftEyePupilSize", "RightEyeStatus", "RightEyeForward", "RightEyePosition", "RightEyePupilSize", "FocusDistance", "FocusStability" };
+    private static readonly string[] ColumnNames = { "Frame", "CaptureTime", "LogTime", "HMDPosition", "HMDRotation", "GazeStatus", "CombinedGazeForward", "CombinedGazePosition", "InterPupillaryDistanceInMM", "LeftEyeStatus", "LeftEyeForward", "LeftEyePosition", "LeftPupilIrisDiameterRatio", "LeftPupilDiameterInMM", "LeftIrisDiameterInMM", "RightEyeStatus", "RightEyeForward", "RightEyePosition", "RightPupilIrisDiameterRatio", "RightPupilDiameterInMM", "RightIrisDiameterInMM", "FocusDistance", "FocusStability" };
     private const string ValidString = "VALID";
     private const string InvalidString = "INVALID";
+
+    int gazeDataCount = 0;
+    float gazeTimer = 0f;
 
     void GetDevice()
     {
@@ -102,6 +112,7 @@ public class EyeTrackingExample : MonoBehaviour
 
     private void Start()
     {
+        VarjoEyeTracking.SetGazeOutputFrequency(frequency);
         //Hiding the gazetarget if gaze is not available or if the gaze calibration is not done
         if (VarjoEyeTracking.IsGazeAllowed() && VarjoEyeTracking.IsGazeCalibrated())
         {
@@ -124,6 +135,17 @@ public class EyeTrackingExample : MonoBehaviour
 
     void Update()
     {
+        if (logging && printFramerate)
+        {
+            gazeTimer += Time.deltaTime;
+            if (gazeTimer >= 1.0f)
+            {
+                Debug.Log("Gaze data rows per second: " + gazeDataCount);
+                gazeDataCount = 0;
+                gazeTimer = 0f;
+            }
+        }
+
         // Request gaze calibration
         if (Input.GetKeyDown(calibrationRequestKey))
         {
@@ -285,10 +307,11 @@ public class EyeTrackingExample : MonoBehaviour
 
         if (logging)
         {
-            int dataCount = VarjoEyeTracking.GetGazeList(out dataSinceLastUpdate);
-            foreach (var data in dataSinceLastUpdate)
+            int dataCount = VarjoEyeTracking.GetGazeList(out dataSinceLastUpdate, out eyeMeasurementsSinceLastUpdate);
+            if (printFramerate) gazeDataCount += dataCount;
+            for (int i = 0; i < dataCount; i++)
             {
-                LogGazeData(data);
+                LogGazeData(dataSinceLastUpdate[i], eyeMeasurementsSinceLastUpdate[i]);
             }
         }
     }
@@ -303,9 +326,9 @@ public class EyeTrackingExample : MonoBehaviour
         }
     }
 
-    void LogGazeData(VarjoEyeTracking.GazeData data)
+    void LogGazeData(VarjoEyeTracking.GazeData data, VarjoEyeTracking.EyeMeasurements eyeMeasurements)
     {
-        string[] logData = new string[18];
+        string[] logData = new string[23];
 
         // Gaze data frame number
         logData[0] = data.frameNumber.ToString();
@@ -326,25 +349,32 @@ public class EyeTrackingExample : MonoBehaviour
         logData[6] = invalid ? "" : data.gaze.forward.ToString("F3");
         logData[7] = invalid ? "" : data.gaze.origin.ToString("F3");
 
+        // IPD
+        logData[8] = invalid ? "" : eyeMeasurements.interPupillaryDistanceInMM.ToString("F3");
+
         // Left eye
         bool leftInvalid = data.leftStatus == VarjoEyeTracking.GazeEyeStatus.Invalid;
-        logData[8] = leftInvalid ? InvalidString : ValidString;
-        logData[9] = leftInvalid ? "" : data.left.forward.ToString("F3");
-        logData[10] = leftInvalid ? "" : data.left.origin.ToString("F3");
-        logData[11] = leftInvalid ? "" : data.leftPupilSize.ToString();
+        logData[9] = leftInvalid ? InvalidString : ValidString;
+        logData[10] = leftInvalid ? "" : data.left.forward.ToString("F3");
+        logData[11] = leftInvalid ? "" : data.left.origin.ToString("F3");
+        logData[12] = leftInvalid ? "" : eyeMeasurements.leftPupilIrisDiameterRatio.ToString("F3");
+        logData[13] = leftInvalid ? "" : eyeMeasurements.leftPupilDiameterInMM.ToString("F3");
+        logData[14] = leftInvalid ? "" : eyeMeasurements.leftIrisDiameterInMM.ToString("F3");
 
         // Right eye
         bool rightInvalid = data.rightStatus == VarjoEyeTracking.GazeEyeStatus.Invalid;
-        logData[12] = rightInvalid ? InvalidString : ValidString;
-        logData[13] = rightInvalid ? "" : data.right.forward.ToString("F3");
-        logData[14] = rightInvalid ? "" : data.right.origin.ToString("F3");
-        logData[15] = rightInvalid ? "" : data.rightPupilSize.ToString();
+        logData[15] = rightInvalid ? InvalidString : ValidString;
+        logData[16] = rightInvalid ? "" : data.right.forward.ToString("F3");
+        logData[17] = rightInvalid ? "" : data.right.origin.ToString("F3");
+        logData[18] = rightInvalid ? "" : eyeMeasurements.rightPupilIrisDiameterRatio.ToString("F3");
+        logData[19] = rightInvalid ? "" : eyeMeasurements.rightPupilDiameterInMM.ToString("F3");
+        logData[20] = rightInvalid ? "" : eyeMeasurements.rightIrisDiameterInMM.ToString("F3");
 
         // Focus
-        logData[16] = invalid ? "" : data.focusDistance.ToString();
-        logData[17] = invalid ? "" : data.focusStability.ToString();
+        logData[21] = invalid ? "" : data.focusDistance.ToString();
+            logData[22] = invalid ? "" : data.focusStability.ToString();
 
-        Log(logData);
+            Log(logData);
     }
 
     // Write given values in the log file

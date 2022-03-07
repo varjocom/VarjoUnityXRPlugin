@@ -52,8 +52,20 @@ public class MixedRealityExample : MonoBehaviour
 
     private HDAdditionalCameraData HDCameraData;
 
+    private VarjoCameraSubsystem cameraSubsystem;
+
     private void Start()
     {
+        if (XRGeneralSettings.Instance != null && XRGeneralSettings.Instance.Manager != null)
+        {
+            var loader = XRGeneralSettings.Instance.Manager.activeLoader as Varjo.XR.VarjoLoader;
+            cameraSubsystem = loader.cameraSubsystem as VarjoCameraSubsystem;
+        }
+
+        if (cameraSubsystem != null)
+        {
+            cameraSubsystem.Start();
+        }
         originalOpaqueValue = VarjoRendering.GetOpaque();
         VarjoRendering.SetOpaque(false);
         cubemapEventListenerSet = onCubemapUpdate.GetPersistentEventCount() > 0;
@@ -150,41 +162,46 @@ public class MixedRealityExample : MonoBehaviour
                     environmentReflections = VarjoMixedReality.environmentCubemapStream.Start();
                 }
 
-                if (VarjoMixedReality.cameraMetadataStream.IsSupported())
+                if (!cameraSubsystem.IsMetadataStreamEnabled)
                 {
-                    metadataStreamEnabled = VarjoMixedReality.cameraMetadataStream.Start();
+                    cameraSubsystem.EnableMetadataStream();
                 }
-                else
-                {
-                    metadataStreamEnabled = false;
-                }
+                metadataStreamEnabled = cameraSubsystem.IsMetadataStreamEnabled;
+            }
+            else
+            {
+                VarjoMixedReality.environmentCubemapStream.Stop();
+                cameraSubsystem.DisableMetadataStream();
             }
             environmentReflectionsEnabled = environmentReflections;
         }
 
         if (environmentReflectionsEnabled && metadataStreamEnabled)
         {
-            cubemapFrame = VarjoMixedReality.environmentCubemapStream.GetFrame();
-
-            metadataFrame = VarjoMixedReality.cameraMetadataStream.GetFrame();
-            float exposureValue = (float)metadataFrame.metadata.ev + Mathf.Log((float)metadataFrame.metadata.cameraCalibrationConstant, 2f);
-            volumeExposure.fixedExposure.Override(exposureValue);
-
-            volumeSky.hdriSky.Override(cubemapFrame.cubemap);
-            volumeSky.updateMode.Override(EnvironmentUpdateMode.Realtime);
-            volumeSky.updatePeriod.Override(1f / (float)reflectionRefreshRate);
-            defaultSkyActive = false;
-
-            volumeVSTWhiteBalance.intensity.Override(1f);
-
-            // Set white balance normalization values
-            Shader.SetGlobalColor("_CamWBGains", metadataFrame.metadata.wbNormalizationData.wbGains);
-            Shader.SetGlobalMatrix("_CamInvCCM", metadataFrame.metadata.wbNormalizationData.invCCM);
-            Shader.SetGlobalMatrix("_CamCCM", metadataFrame.metadata.wbNormalizationData.ccm);
-
-            if (cubemapEventListenerSet)
+            if (VarjoMixedReality.environmentCubemapStream.hasNewFrame && cameraSubsystem.MetadataStream.hasNewFrame)
             {
-                onCubemapUpdate.Invoke();
+                cubemapFrame = VarjoMixedReality.environmentCubemapStream.GetFrame();
+
+                metadataFrame = cameraSubsystem.MetadataStream.GetFrame();
+                float exposureValue = (float)metadataFrame.metadata.ev + Mathf.Log((float)metadataFrame.metadata.cameraCalibrationConstant, 2f);
+                volumeExposure.fixedExposure.Override(exposureValue);
+
+                volumeSky.hdriSky.Override(cubemapFrame.cubemap);
+                volumeSky.updateMode.Override(EnvironmentUpdateMode.Realtime);
+                volumeSky.updatePeriod.Override(1f / (float)reflectionRefreshRate);
+                defaultSkyActive = false;
+
+                volumeVSTWhiteBalance.intensity.Override(1f);
+
+                // Set white balance normalization values
+                Shader.SetGlobalColor("_CamWBGains", metadataFrame.metadata.wbNormalizationData.wbGains);
+                Shader.SetGlobalMatrix("_CamInvCCM", metadataFrame.metadata.wbNormalizationData.invCCM);
+                Shader.SetGlobalMatrix("_CamCCM", metadataFrame.metadata.wbNormalizationData.ccm);
+
+                if (cubemapEventListenerSet)
+                {
+                    onCubemapUpdate.Invoke();
+                }
             }
         }
         else if (!defaultSkyActive)

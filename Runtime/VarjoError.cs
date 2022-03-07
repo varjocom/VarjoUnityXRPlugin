@@ -19,7 +19,7 @@ namespace Varjo.XR
         Throw
     }
 
-    public class VarjoError
+    public static class VarjoError
     {
         /// <summary>
         /// Controls how errors are handled
@@ -32,16 +32,17 @@ namespace Varjo.XR
         /// <returns>True if last API call completed successfully</returns>
         internal static bool CheckError()
         {
-            int error = GetError();
-            if (error != 0)
+            long varjoErrorCode = GetError();
+
+            if (varjoErrorCode != 0)
             {
                 switch (ErrorHandlingMode)
                 {
                     case VarjoErrorHandlingMode.Log:
-                        Debug.LogWarning(GetErrorDescription(error));
+                        Debug.LogWarning(GetErrorDescription(varjoErrorCode));
                         break;
                     case VarjoErrorHandlingMode.Throw:
-                        throw new VarjoRuntimeException(error, GetErrorDescription(error));
+                        throw new VarjoRuntimeException(varjoErrorCode, GetErrorDescription(varjoErrorCode));
                     default:
                         break;
                 }
@@ -50,11 +51,28 @@ namespace Varjo.XR
             return true;
         }
 
+        internal static void HandleErrorMessage(string errorMessage)
+        {
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                return;
+            }
+
+            switch (ErrorHandlingMode)
+            {
+                case VarjoErrorHandlingMode.Log:
+                    Debug.LogWarning(errorMessage);
+                    break;
+                case VarjoErrorHandlingMode.Throw:
+                    throw new Exception(errorMessage);
+            }
+        }
+
         /// <summary>
         /// Gets human readable error string for given error code
         /// </summary>
         /// <returns>Error message</returns>
-        private static string GetErrorDescription(int errorCode)
+        private static string GetErrorDescription(long errorCode)
         {
             IntPtr ptr = GetErrorDesc(errorCode);
             return System.Runtime.InteropServices.Marshal.PtrToStringAnsi(ptr);
@@ -65,14 +83,14 @@ namespace Varjo.XR
         /// </summary>
         /// <returns>Error code</returns>
         [DllImport("VarjoUnityXR")]
-        private static extern int GetError();
+        private static extern long GetError();
 
         /// <summary>
         /// Gets human readable error string for given error code
         /// </summary>
         /// <returns>Native pointer to error message</returns>
         [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
-        private static extern IntPtr GetErrorDesc(int errorCode);
+        private static extern IntPtr GetErrorDesc(long errorCode);
     }
 
     /// <summary>
@@ -80,12 +98,12 @@ namespace Varjo.XR
     /// </summary>
     public class VarjoRuntimeException : Exception
     {
-        public VarjoRuntimeException(int error, string message)
+        public VarjoRuntimeException(long error, string message)
             : base(message)
         {
             ErrorCode = error;
         }
 
-        public int ErrorCode { get; private set; }
+        public long ErrorCode { get; private set; }
     }
 }

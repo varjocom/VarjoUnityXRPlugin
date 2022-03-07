@@ -2,6 +2,46 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.0.0
+
+Compatible with Varjo Base 3.5 or newer.
+
+### Added
+
+- Support for simple two view stereo renderering
+- AR Foundation support, including the following:
+  - XRSessionSubsystem provider
+  - XRCameraSubsystem provider, adding support for controlling video see-through cameras with `XRCameraSubsystem.Start()` and `XRCameraSubsystem.Stop()`,
+  accessing the camera image CPU buffers, utilities for converting the buffers to RGB and grayscale textures and support for retrieving camera intrinsics
+  - XROcclusionSubsystem provider, adding support for enabling and disabling environment depth estimation with `XROcclusionSubsystem.Start()` and `XROcclusionSubsystem.Stop()`
+- New `VarjoEyeTracking.EyeMeasurements` structure, which provides gaze
+  tracker's estimates for user's pupil and iris diamaters in millimeters, their
+  ratios and user's interpupillary distance
+- New `VarjoEyeTracking.GetEyeMeasurements()` function for retrieving latest
+  eye measurements data and added overload for `VarjoEyeTracking.GetGazeList()`
+  function for retrieving `EyeMeasurements` data together with `GazeData` data
+
+### Changed
+
+- Changed minimum supported Unity version to Unity 2020.3
+- Moved camera metadata stream to `VarjoCameraSubsystem.MetadataStream`, where it can be accessed after calling `VarjoCameraSubsystem.EnableMetadataStream()`
+- Renamed `EventHeadsetStandbyStatus` as `EventStandbyStatus` and `VarjoEventManager.GetEventHeadsetStandbyStatus()` as `VarjoEventManager.GetEventStandbyStatus()`
+### Removed
+
+- Removed deprecated `VarjoEyeTracking.RequestGazeCalibration(GazeCalibrationMode calibrationMode, GazeOutputFilterMode outputFilterMode)` and `GazeOutputFilterMode`
+- Removed the old implementation of `VarjoDistortedColorStream` as the stream is now available through `VarjoCameraSubsystem`
+
+### Deprecated
+
+- Deprecated `leftPupilSize` and `rightPupilSize` fields of `VarjoEyeTracking.GazeData`
+  structure. Change new code to use values provided in `VarjoEyeTracking.EyeMeasurements`
+  structure.
+
+### Fixed
+
+- Fixed Varjo Loader Initialization always returning True
+- Fixed inside-out tracking not working without SteamVR being installed
+
 ## 2.3.0
 
 Compatible with Varjo Base 3.4 or newer.

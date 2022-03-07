@@ -15,6 +15,8 @@ namespace Varjo.XR
         MultiPass = 0,
         /** <summary>The scene is rendered in two passes: one two-wide instanced stereo rendering pass for the context displays and another for the focus displays.</summary> */
         TwoPass = 1,
+        /** <summary>The scene is rendered in one two-wide instanced stereo rendering pass for the context displays. Focus views are not rendered and foveated rendering is disabled.</summary> */
+        Stereo = 3
     }
 
     public class VarjoRendering

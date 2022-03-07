@@ -1,91 +1,191 @@
 // Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
-using UnityEngine;
+using System.Runtime.InteropServices;
+using Unity.Collections.LowLevel.Unsafe;
+
+using Unity.Collections;
+
 
 namespace Varjo.XR
 {
-    /// <summary>
-    /// Varjo Distorted Color Stream
-    /// </summary>
-    public class VarjoDistortedColorStream : VarjoFrameStream
+    internal class VarjoDistortedColorStreamInternal
     {
-        /// <summary>
-        /// Varjo Distorted Color Frame
-        /// </summary>
-        public class VarjoDistortedColorFrame
+        private VarjoStreamConfig _config = default;
+
+        private bool cameraParametersSet = false;
+
+        private VarjoCameraIntrinsics[] intrinsics = new VarjoCameraIntrinsics[2];
+
+        private VarjoMatrix[] extrinsics = new VarjoMatrix[2];
+
+        internal ref readonly VarjoStreamConfig ConfigRef => ref _config;
+
+        internal VarjoDistortedColorStreamInternal() { }
+
+        internal bool IsStarted() => Native.MRDistortedColorStream_IsStarted();
+
+        internal bool HasReceivedData() => Native.MRDistortedColorStream_HasReceivedData();
+
+        internal bool HasFetchedCameraParameters() => Native.MRDistortedColorStream_HasFetchedCameraParameters();
+
+        internal bool HasNewFrame() => Native.MRDistortedColorStream_HasNewFrame();
+
+        internal bool Start()
         {
-            /** <summary>Timestamp at end of exposure.</summary> */
-            public long timestamp { get; internal set; }
-            /** <summary>Camera metadata</summary> */
-            public VarjoCameraMetadata metadata { get; internal set; }
-            /** <summary>Texture from left camera.</summary> */
-            public Texture2D leftTexture { get; internal set; }
-            /** <summary>Texture from right camera.</summary> */
-            public Texture2D rightTexture { get; internal set; }
+            _config = Native.MRDistortedColorStream_GetStreamConfig();
+            return Native.MRDistortedColorStream_Start();
         }
 
-        private VarjoDistortedColorData data;
-        private VarjoTextureBuffer leftBuffer;
-        private VarjoTextureBuffer rightBuffer;
+        internal void Stop() => Native.MRDistortedColorStream_Stop();
 
-        internal VarjoDistortedColorStream() : base()
+        internal bool GetCameraParameters()
         {
-            leftBuffer = new VarjoTextureBuffer(true);
-            rightBuffer = new VarjoTextureBuffer(true);
+            if (!HasFetchedCameraParameters()) return false;
+
+            intrinsics[0] = Native.MRDistortedColorStream_GetIntrinsics(VarjoStreamChannel.Left);
+            intrinsics[1] = Native.MRDistortedColorStream_GetIntrinsics(VarjoStreamChannel.Right);
+            extrinsics[0] = Native.MRDistortedColorStream_GetExtrinsics(VarjoStreamChannel.Left);
+            extrinsics[1] = Native.MRDistortedColorStream_GetExtrinsics(VarjoStreamChannel.Right);
+            cameraParametersSet = true;
+            return true;
+        }
+        internal VarjoCameraIntrinsics GetCameraIntrinsics(VarjoStreamChannel channel)
+        {
+            if (!cameraParametersSet) GetCameraParameters();
+            return intrinsics[(int)channel];
         }
 
-        /// <summary>
-        /// Gets latest frame from the frame stream.
-        /// Frames update only if stream has been started.
-        /// May be called from main thread only.
-        /// </summary>
-        /// <returns>Latest Distorted color stream frame.</returns>
-        public VarjoDistortedColorFrame GetFrame()
+        internal VarjoMatrix GetCameraExtrinsics(VarjoStreamChannel channel)
         {
-            lock (mutex)
+            if (!cameraParametersSet) GetCameraParameters();
+            return extrinsics[(int)channel];
+        }
+
+        internal bool IsReadyToReturnImage() => IsStarted() && HasReceivedData();
+
+        internal bool ObtainCPUDataCopy(Allocator allocator, out NativeArray<byte> left, out NativeArray<byte> right, out VarjoBufferMetadata leftBufferMetadata, out VarjoBufferMetadata rightBufferMetadata, out DistortedColorFrameMetadata frameMetadata)
+        {
+            if (!IsReadyToReturnImage())
             {
-                if (!hasReceivedData) return new VarjoDistortedColorFrame();
+                left = right = default;
+                leftBufferMetadata = rightBufferMetadata = default;
+                frameMetadata = default;
+                return false;
+            }
 
-                var frame = new VarjoDistortedColorFrame();
-                frame.timestamp = data.timestamp;
-                frame.metadata = new VarjoCameraMetadata(data);
-                frame.leftTexture = leftBuffer.GetTexture2D();
-                frame.rightTexture = rightBuffer.GetTexture2D();
+            Native.MRDistortedColorStream_Lock();
 
-                hasNewFrame = false;
-                return frame;
+            frameMetadata = Native.MRDistortedColorStream_GetLastFrameMetadata();
+
+            leftBufferMetadata = Native.MRDistortedColorStream_GetLastFrameBufferMetadata(VarjoStreamChannel.Left);
+            left = new NativeArray<byte>(leftBufferMetadata.byteSize, allocator, NativeArrayOptions.UninitializedMemory);
+
+            rightBufferMetadata = Native.MRDistortedColorStream_GetLastFrameBufferMetadata(VarjoStreamChannel.Right);
+            right = new NativeArray<byte>(rightBufferMetadata.byteSize, allocator, NativeArrayOptions.UninitializedMemory);
+
+            unsafe {
+                void* pleft = NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks<byte>(left);
+                void* pright = NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks<byte>(right);
+
+                Native.MRDistortedColorStream_GetLastFrameCPUDataCopy((IntPtr)pleft, leftBufferMetadata.byteSize, (IntPtr)pright, rightBufferMetadata.byteSize);
+            }
+
+            Native.MRDistortedColorStream_Unlock();
+
+            return true;
+        }
+
+        internal void ConvertNV12ToRGBA32(byte[] cpuData, in VarjoBufferMetadata metadata, IntPtr destination, int destinationSize)
+        {
+            GCHandle handle = GCHandle.Alloc(cpuData, GCHandleType.Pinned);
+            Native.MRConvertNV12ToRGBA32(handle.AddrOfPinnedObject(), in metadata, destination, destinationSize);
+            handle.Free();
+        }
+
+        internal void ConvertNV12ToRGBA32(NativeArray<byte> cpuData, in VarjoBufferMetadata metadata, IntPtr destination, int destinationSize)
+        {
+            unsafe {
+                void* pdata = NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks<byte>(cpuData);
+                Native.MRConvertNV12ToRGBA32((IntPtr)pdata, in metadata, destination, destinationSize);
             }
         }
 
-        internal override void NewFrameCallback(VarjoStreamFrame streamData, IntPtr userdata)
+        internal void ConvertYUV422ToRGBA32(NativeArray<byte> cpuData, in VarjoBufferMetadata metadata, IntPtr destination, int destinationSize)
         {
-            lock (mutex)
-            {
-                Debug.Assert(streamData.type == StreamType);
-                data = streamData.metadata.distortedColorData;
-
-                long leftBufferId = 0;
-                if (!VarjoMixedReality.GetDataStreamBufferId(streamData.id, streamData.frameNumber, 0 /* varjo_ChannelIndex_Left */, out leftBufferId))
-                {
-                    Debug.LogErrorFormat("Failed to get distorted color left buffer id {0}", streamData.frameNumber);
-                    return;
-                }
-
-                long rightBufferId = 0;
-                if (!VarjoMixedReality.GetDataStreamBufferId(streamData.id, streamData.frameNumber, 1/* varjo_ChannelIndex_Right */, out rightBufferId))
-                {
-                    Debug.LogErrorFormat("Failed to get distorted color right buffer id {0}", streamData.frameNumber);
-                    return;
-                }
-
-                leftBuffer.UpdateBuffer(leftBufferId);
-                rightBuffer.UpdateBuffer(rightBufferId);
-                hasReceivedData = true;
-                hasNewFrame = true;
+            unsafe {
+                void* pdata = NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks<byte>(cpuData);
+                Native.MRConvertYUV422ToRGBA32((IntPtr)pdata, in metadata, destination, destinationSize);
             }
         }
 
-        internal override VarjoStreamType StreamType { get { return VarjoStreamType.DistortedColor; } }
+        internal void GetYPlane(NativeArray<byte> cpuData, in VarjoBufferMetadata metadata, IntPtr destination, int destinationSize)
+        {
+            unsafe {
+                void* pdata = NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks<byte>(cpuData);
+                Native.MRGetYPlane((IntPtr)pdata, in metadata, destination, destinationSize);
+            }
+        }
+
+
+        private static class Native
+        {
+            [DllImport("VarjoUnityXR")]
+            [return: MarshalAs(UnmanagedType.U1)]
+            public static extern bool MRDistortedColorStream_IsStarted();
+
+            [DllImport("VarjoUnityXR")]
+            [return: MarshalAs(UnmanagedType.U1)]
+            public static extern bool MRDistortedColorStream_HasNewFrame();
+
+            [DllImport("VarjoUnityXR")]
+            [return: MarshalAs(UnmanagedType.U1)]
+            public static extern bool MRDistortedColorStream_HasReceivedData();
+
+            [DllImport("VarjoUnityXR")]
+            [return: MarshalAs(UnmanagedType.U1)]
+            public static extern bool MRDistortedColorStream_HasFetchedCameraParameters();
+
+            [DllImport("VarjoUnityXR")]
+            [return: MarshalAs(UnmanagedType.U1)]
+            public static extern bool MRDistortedColorStream_Start();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRDistortedColorStream_Stop();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern DistortedColorFrameMetadata MRDistortedColorStream_GetLastFrameMetadata();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern VarjoBufferMetadata MRDistortedColorStream_GetLastFrameBufferMetadata(VarjoStreamChannel channel);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern VarjoCameraIntrinsics MRDistortedColorStream_GetIntrinsics(VarjoStreamChannel channel);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern VarjoMatrix MRDistortedColorStream_GetExtrinsics(VarjoStreamChannel channel);
+
+
+            [DllImport("VarjoUnityXR")]
+            public static extern VarjoStreamConfig MRDistortedColorStream_GetStreamConfig();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRDistortedColorStream_GetLastFrameCPUDataCopy(IntPtr leftBuffer, int leftBufferSize, IntPtr rightBuffer, int rightBufferSize);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRDistortedColorStream_Lock();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRDistortedColorStream_Unlock();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRConvertNV12ToRGBA32(IntPtr cpuData, in VarjoBufferMetadata buffer, IntPtr destination, int destinationSize);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRConvertYUV422ToRGBA32(IntPtr cpuData, in VarjoBufferMetadata buffer, IntPtr destination, int destinationSize);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void MRGetYPlane(IntPtr cpuData, in VarjoBufferMetadata buffer, IntPtr destination, int destinationSize);
+        }
     }
 }
