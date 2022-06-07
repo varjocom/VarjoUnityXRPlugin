@@ -62,7 +62,7 @@ namespace Varjo.XR
 
             public override Promise<SessionAvailability> GetAvailabilityAsync()
             {
-                var availability = VarjoMixedReality.IsMRReady() ? SessionAvailability.Supported : SessionAvailability.None;
+                var availability = VarjoMixedReality.IsMRReady() ? (SessionAvailability.Supported | SessionAvailability.Installed) : SessionAvailability.None;
                 return Promise<SessionAvailability>.CreateResolvedPromise(availability);
             }
 

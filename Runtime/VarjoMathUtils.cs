@@ -31,6 +31,12 @@ namespace Varjo.XR
             new Vector4(0, 0, 1, 1) //
         );
 
+        public static Matrix4x4 WorldMatrixToUnity(double[] mat)
+        {
+            Debug.Assert(mat.Length == 16);
+            return (flipZ * ConvertDoubleToFloatMatrix(mat) * flipZ);
+        }
+
         public static Matrix4x4 ProjectionMatrixToUnity(double[] mat)
         {
             return reverseZ * ConvertDoubleToFloatMatrix(mat);

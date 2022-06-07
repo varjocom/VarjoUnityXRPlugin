@@ -2,6 +2,31 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.1.0
+
+Compatible with Varjo Base 3.6 or newer.
+
+### Added
+
+- Support for up to 14 SteamVR trackers with button inputs
+- Proper support for Valve Index controllers
+- Device layouts for all supported input devices
+- DirectX 12 support (requires Unity 2021.2 or newer)
+- Function for controlling global chroma keying
+- Support for triggering "One dot" gaze tracking calibration
+
+### Changed
+
+- Input subsystem now ensures there is only one SteamVR controller device with
+a given role (left hand, right foot, keyboard etc.) and reports other devices
+with the same role as generic tracker devices without button inputs
+- Tracked devices have more descriptive names now
+
+### Fixed
+
+- Fixed Session subsystem reporting wrong installed status
+- Fixed `VarjoCameraSubsystem.MetadataStream` not working with IL2CPP
+
 ## 3.0.0
 
 Compatible with Varjo Base 3.5 or newer.
@@ -26,6 +51,7 @@ Compatible with Varjo Base 3.5 or newer.
 - Changed minimum supported Unity version to Unity 2020.3
 - Moved camera metadata stream to `VarjoCameraSubsystem.MetadataStream`, where it can be accessed after calling `VarjoCameraSubsystem.EnableMetadataStream()`
 - Renamed `EventHeadsetStandbyStatus` as `EventStandbyStatus` and `VarjoEventManager.GetEventHeadsetStandbyStatus()` as `VarjoEventManager.GetEventStandbyStatus()`
+
 ### Removed
 
 - Removed deprecated `VarjoEyeTracking.RequestGazeCalibration(GazeCalibrationMode calibrationMode, GazeOutputFilterMode outputFilterMode)` and `GazeOutputFilterMode`

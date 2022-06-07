@@ -1,5 +1,6 @@
 
 // Copyright 2019 Varjo Technologies Oy. All rights reserved.
+using System.IO;
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -8,8 +9,70 @@ using UnityEngine.XR;
 using UnityEngine.XR.Management;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.XR.Management;
+#endif
+
+#if UNITY_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.XR;
+using Varjo.XR.Input;
+#endif
+
 namespace Varjo.XR
 {
+#if UNITY_INPUT_SYSTEM
+#if UNITY_EDITOR
+    [InitializeOnLoad]
+#endif
+    static class InputLayoutLoader
+    {
+        static InputLayoutLoader()
+        {
+            RegisterInputLayouts();
+        }
+
+        public static void RegisterInputLayouts()
+        {
+            UnityEngine.InputSystem.InputSystem.RegisterLayout<VarjoHMD>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithManufacturer("Varjo")
+                    .WithProduct("^(XR-|VR-|AERO).*$")
+            );
+            InputSystem.RegisterLayout<VarjoViveWand>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithManufacturer("HTC")
+                    .WithProduct(@"(((SteamVR Controller \(Vive Wand)).*)")
+            );
+            InputSystem.RegisterLayout<VarjoIndexController>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithManufacturer("Valve")
+                    .WithProduct(@"(((SteamVR Controller \(Index Controller)).*)")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerWithButtons>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct("^(SteamVR Tracker).((?!Hand).)*$")
+            );
+            InputSystem.RegisterLayout<VarjoHandedSteamVRTracker>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \(((Left)|(Right)).Hand\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTracker>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct("^(SteamVR Tracker)$")
+            );
+        }
+    }
+#endif
+
     public class VarjoLoader : XRLoaderHelper
     {
         private static List<XRDisplaySubsystemDescriptor> s_DisplaySubsystemDescriptors =
@@ -36,44 +99,50 @@ namespace Varjo.XR
                 return false;
             }
 
-            if (!InitializePluginInstance())
-            {
-                return false;
-            }
+#if UNITY_INPUT_SYSTEM
+            InputLayoutLoader.RegisterInputLayouts();
+#endif
+
+#if UNITY_EDITOR
+            string actionManifestPath = Path.GetFullPath("Packages/com.varjo.xr/Runtime/Input/Configs/actions.json");
+#else
+            string actionManifestPath = Path.GetFullPath(Application.streamingAssetsPath + "/Varjo/Input/Configs/actions.json");
+#endif
+            SetActionManifestPath(actionManifestPath);
 
             // Send the settings over to the native plugin
             VarjoSettings settings = GetSettings();
             if (settings != null)
             {
-                UserDefinedSettings uds;
-                uds.stereoRenderingMode = (ushort)settings.StereoRenderingMode;
-                uds.separateCullPass = (ushort)(settings.SeparateCullPass ? 1 : 0);
-                uds.foveatedRendering = (ushort)(settings.FoveatedRendering ? 1 : 0);
-                uds.contextScalingFactor = settings.ContextScalingFactor;
-                uds.focusScalingFactor = settings.FocusScalingFactor;
-                uds.opaque = (ushort)(settings.Opaque ? 1 : 0);
-                uds.faceLocked = (ushort)(settings.FaceLocked ? 1 : 0);
-                uds.flipY = (ushort)(settings.FlipY ? 1 : 0);
-                uds.occlusionMesh = (ushort)(settings.OcclusionMesh ? 1 : 0);
-                uds.sessionPriority = settings.SessionPriority;
-                uds.submitDepth = (ushort)(settings.SubmitDepth ? 1 : 0);
-                uds.depthSorting = (ushort)(settings.DepthSorting ? 1 : 0);
-                uds.depthTestRange = (ushort)(settings.DepthTestRange ? 1 : 0);
-                uds.depthTestNearZ = settings.DepthTestNearZ;
-                uds.depthTestFarZ = settings.DepthTestFarZ;
+                NativePluginSettings nps;
+                nps.stereoRenderingMode = (ushort)settings.StereoRenderingMode;
+                nps.separateCullPass = (ushort)(settings.SeparateCullPass ? 1 : 0);
+                nps.foveatedRendering = (ushort)(settings.FoveatedRendering ? 1 : 0);
+                nps.contextScalingFactor = settings.ContextScalingFactor;
+                nps.focusScalingFactor = settings.FocusScalingFactor;
+                nps.opaque = (ushort)(settings.Opaque ? 1 : 0);
+                nps.faceLocked = (ushort)(settings.FaceLocked ? 1 : 0);
+                nps.flipY = (ushort)(settings.FlipY ? 1 : 0);
+                nps.occlusionMesh = (ushort)(settings.OcclusionMesh ? 1 : 0);
+                nps.sessionPriority = settings.SessionPriority;
+                nps.submitDepth = (ushort)(settings.SubmitDepth ? 1 : 0);
+                nps.depthSorting = (ushort)(settings.DepthSorting ? 1 : 0);
+                nps.depthTestRange = (ushort)(settings.DepthTestRange ? 1 : 0);
+                nps.depthTestNearZ = settings.DepthTestNearZ;
+                nps.depthTestFarZ = settings.DepthTestFarZ;
 
-                switch (settings.StereoRenderingMode)
-                {
-                    default:
-                    case VarjoStereoRenderingMode.MultiPass:
-                        uds.useTextureArrays = 0;
-                        break;
-                    case VarjoStereoRenderingMode.TwoPass:
-                    case VarjoStereoRenderingMode.Stereo:
-                        uds.useTextureArrays = 1;
-                        break;
-                }
-                SetUserDefinedSettings(uds);
+#if UNITY_2021_2_OR_NEWER
+                nps.supportsDX12 = 1;
+#else
+                nps.supportsDX12 = 0;
+#endif
+
+                SetNativePluginSettings(nps);
+            }
+
+            if (!InitializePluginInstance())
+            {
+                return false;
             }
 
             CreateSubsystem<XRDisplaySubsystemDescriptor, XRDisplaySubsystem>(s_DisplaySubsystemDescriptors, "VarjoDisplay");
@@ -81,7 +150,7 @@ namespace Varjo.XR
             CreateSubsystem<XRSessionSubsystemDescriptor, XRSessionSubsystem>(s_SessionSubsystemDescriptors, VarjoSessionSubsystem.VarjoSessionID);
             CreateSubsystem<XRCameraSubsystemDescriptor, XRCameraSubsystem>(s_CameraSubsystemDescriptors, VarjoCameraSubsystem.VarjoCameraID);
             CreateSubsystem<XROcclusionSubsystemDescriptor, XROcclusionSubsystem>(s_OcclusionSubsystemDescriptors, VarjoOcclusionSubsystem.VarjoOcclusionID);
-            return true;
+            return VarjoError.CheckError();
         }
 
         public override bool Start()
@@ -112,7 +181,7 @@ namespace Varjo.XR
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct UserDefinedSettings
+        private struct NativePluginSettings
         {
             public ushort stereoRenderingMode;
             public ushort separateCullPass;
@@ -129,11 +198,14 @@ namespace Varjo.XR
             public ushort depthTestRange;
             public double depthTestNearZ;
             public double depthTestFarZ;
-            public ushort useTextureArrays;
+            public ushort supportsDX12;
         }
 
         [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
-        private static extern void SetUserDefinedSettings(UserDefinedSettings settings);
+        private static extern void SetActionManifestPath([MarshalAs(UnmanagedType.LPStr)] string path);
+
+        [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
+        private static extern void SetNativePluginSettings(NativePluginSettings settings);
 
         [DllImport("VarjoUnityXR")]
         private static extern bool InitializePluginInstance();

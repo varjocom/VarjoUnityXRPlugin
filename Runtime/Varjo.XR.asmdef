@@ -3,8 +3,10 @@
     "rootNamespace": "",
     "references": [
         "Unity.XR.Management",
+        "Unity.XR.Management.Editor",
         "Unity.XR.ARSubsystems",
-        "Unity.XR.ARFoundation"
+        "Unity.XR.ARFoundation",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -13,6 +15,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "",
+            "define": "UNITY_INPUT_SYSTEM"
+        }
+    ],
     "noEngineReferences": false
 }

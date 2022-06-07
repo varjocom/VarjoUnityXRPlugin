@@ -37,22 +37,33 @@ namespace Varjo.XR
         /// <summary>
         /// Enable or disable chroma keying.
         /// </summary>
+        /// <param name="global">
+        /// When <c>true</c> enables video pass through and starts chroma keying for all application layers regardless if they have chroma key
+        /// flag set.Varjo system layers are not chroma keyed. This is used as force override to make it possible to run non-MR applications with chroma keying.
+        /// Default is <c>false.</c>
+        /// </param>
         /// <remarks>
         /// Start chroma keying for the video pass through image. This enables occlusion between VR and MR content
         /// when the VR content is submitted as a layer with chroma key testing enabled.
         /// This setting is ignored unless <see cref="VarjoMixedReality.StartRender"/> has been enabled.
         /// </remarks>
         /// <param name="enabled">Enabled.</param>
-        /// <returns></returns>
-        public static bool EnableChromaKey(bool enabled)
+        public static bool EnableChromaKey(bool enabled, bool global = false)
         {
-            if (!Native.EnableChromaKey(enabled))
+            if (global)
             {
-                VarjoError.CheckError();
-                return false;
+                Native.SetChromaKeyGlobal(enabled);
+                return VarjoError.CheckError();
             }
-
-            return true;
+            else
+            {
+                if (!Native.EnableChromaKey(enabled))
+                {
+                    VarjoError.CheckError();
+                    return false;
+                }
+                return true;
+            }
         }
 
         /// <summary>
@@ -183,6 +194,9 @@ namespace Varjo.XR
 
             [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
             public static extern bool IsChromaKeyEnabled();
+
+            [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
+            public static extern void SetChromaKeyGlobal(bool enabled);
 
             [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
             public static extern int GetChromaKeyConfigCount();

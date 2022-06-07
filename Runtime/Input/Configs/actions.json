@@ -1,0 +1,163 @@
+{
+   "action_sets" : [
+    {
+      "name": "/actions/default",
+      "usage": "single"
+    }
+   ],
+  "actions": [
+    {
+      "name": "/actions/default/in/grip",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/default/in/grip_pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/pose",
+      "type": "pose"
+    },
+    {
+      "name": "/actions/default/in/primary",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/primary_touched",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/secondary",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/secondary_touched",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/system",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/thumbstick",
+      "type": "vector2"
+    },
+    {
+      "name": "/actions/default/in/thumbstick_touched",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/thumbstick_pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/trackpad",
+      "type": "vector2"
+    },
+    {
+      "name": "/actions/default/in/trackpad_touched",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/trackpad_pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/trigger",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/default/in/trigger_touched",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/trigger_pressed",
+      "type": "boolean"
+    }
+  ],
+  "default_bindings": [
+    {
+      "binding_url": "bindings_knuckles.json",
+      "controller_type": "knuckles"
+    },
+    {
+      "binding_url": "bindings_vive_controller.json",
+      "controller_type": "vive_controller"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_camera.json",
+      "controller_type": "vive_tracker_camera"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_chest.json",
+      "controller_type": "vive_tracker_chest"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_handed.json",
+      "controller_type": "vive_tracker_handed"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_keyboard.json",
+      "controller_type": "vive_tracker_keyboard"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_left_elbow.json",
+      "controller_type": "vive_tracker_left_elbow"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_left_foot.json",
+      "controller_type": "vive_tracker_left_foot"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_left_knee.json",
+      "controller_type": "vive_tracker_left_knee"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_left_shoulder.json",
+      "controller_type": "vive_tracker_left_shoulder"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_right_elbow.json",
+      "controller_type": "vive_tracker_right_elbow"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_right_foot.json",
+      "controller_type": "vive_tracker_right_foot"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_right_knee.json",
+      "controller_type": "vive_tracker_right_knee"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_right_shoulder.json",
+      "controller_type": "vive_tracker_right_shoulder"
+    },
+    {
+      "binding_url": "bindings_vive_tracker_waist.json",
+      "controller_type": "vive_tracker_waist"
+    }
+  ],
+   "localization" : [
+    {
+      "/actions/default": "Actions For Controllers",
+      "/actions/default/in/grip": "Grip (Vector1)",
+      "/actions/default/in/grip_pressed": "Grip Pressed (Boolean)",
+      "/actions/default/in/pose": "Pose (Pose)",
+      "/actions/default/in/primary": "Primary (Boolean)",
+      "/actions/default/in/primary_touched": "Primary Touched (Boolean)",
+      "/actions/default/in/secondary": "Secondary (Boolean)",
+      "/actions/default/in/secondary_touched": "Secondary Touched (Boolean)",
+      "/actions/default/in/system": "System (Boolean)",
+      "/actions/default/in/thumbstick": "Thumbstick Position (Vector2)",
+      "/actions/default/in/thumbstick_pressed": "Thumbstick Pressed (Boolean)",
+      "/actions/default/in/thumbstick_touched": "Thumbstick Touched (Boolean)",
+      "/actions/default/in/trackpad": "Trackpad Position (Vector2)",
+      "/actions/default/in/trackpad_pressed": "Trackpad Pressed (Boolean)",
+      "/actions/default/in/trackpad_touched": "Trackpad Touched (Boolean)",
+      "/actions/default/in/trigger": "Trigger (Vector1)",
+      "/actions/default/in/trigger_pressed": "Trigger Pressed (Boolean)",
+      "/actions/default/in/trigger_touched": "Trigger Touched (Boolean)",
+      "language_tag": "en_us"
+    }
+   ]
+}

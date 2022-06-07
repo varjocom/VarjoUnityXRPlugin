@@ -68,10 +68,10 @@ namespace Varjo.XR
     }
 
     /// <summary>
-    /// Headset standby status event data.
+    /// Standby status event data.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct EventHeadsetStandbyStatus
+    public struct EventStandbyStatus
     {
         /** <summary>Is the headset on standby.</summary> */
         public uint onStandby;
@@ -187,10 +187,10 @@ namespace Varjo.XR
         /// <returns>EventButton of polled event or default value.</returns>
         [DllImport("VarjoUnityXR")] public static extern EventButton GetEventButton();
         /// <summary>
-        /// Get EventHeadsetStandbyStatus.
+        /// Get EventStandbyStatus.
         /// </summary>
-        /// <returns>EventHeadsetStandbyStatus of polled event or default value.</returns>
-        [DllImport("VarjoUnityXR")] public static extern EventHeadsetStandbyStatus GetEventHeadsetStandbyStatus();
+        /// <returns>EventStandbyStatus of polled event or default value.</returns>
+        [DllImport("VarjoUnityXR")] public static extern EventStandbyStatus GetEventStandbyStatus();
         /// <summary>
         /// Get EventForeground.
         /// </summary>
@@ -272,7 +272,7 @@ namespace Varjo.XR
                         break;
 
                     case EventType.EVENT_HEADSET_STANDBY_STATUS:
-                        bool inStandBy = GetEventHeadsetStandbyStatus().onStandby != 0;
+                        bool inStandBy = GetEventStandbyStatus().onStandby != 0;
                         if (OnStandbyEvent != null)
                             OnStandbyEvent(inStandBy);
                         break;

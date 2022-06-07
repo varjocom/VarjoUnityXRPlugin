@@ -375,10 +375,10 @@ namespace Varjo.XR
             return Native.MRSupportsDataStream(type);
         }
 
-        internal static bool StartDataStream(VarjoStreamType type, VarjoStreamCallback callback)
+        internal static bool StartDataStream(VarjoStreamType type, VarjoStreamCallback callback, IntPtr userdata)
         {
             if (!IsMRReady()) return false;
-            return Native.MRStartDataStream(type, callback, IntPtr.Zero);
+            return Native.MRStartDataStream(type, callback, userdata);
         }
 
         internal static void StopDataStream(VarjoStreamType type)

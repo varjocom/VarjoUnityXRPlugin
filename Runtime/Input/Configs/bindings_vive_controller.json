@@ -1,0 +1,134 @@
+{
+   "action_manifest_version" : 0,
+   "alias_info" : {},
+   "bindings" : {
+      "/actions/default" : {
+         "poses": [
+            {
+                "output": "/actions/default/in/pose",
+                "path": "/user/hand/left/pose/raw"
+            },
+            {
+                "output": "/actions/default/in/pose",
+                "path": "/user/hand/right/pose/raw"
+            }
+        ],
+        "sources": [
+          {
+            "inputs": {
+              "value": {
+                "output": "/actions/default/in/grip"
+              }
+            },
+            "mode": "scalar_constant",
+            "path": "/user/hand/left/input/grip"
+          },
+          {
+            "inputs": {
+              "value": {
+                "output": "/actions/default/in/grip"
+              }
+            },
+            "mode": "scalar_constant",
+            "path": "/user/hand/right/input/grip"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/grip_pressed"
+              }
+            },
+            "mode": "button",
+            "path": "/user/hand/left/input/grip"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/grip_pressed"
+              }
+            },
+            "mode": "button",
+            "path": "/user/hand/right/input/grip"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/primary"
+              }
+            },
+            "mode": "button",
+            "path": "/user/hand/left/input/application_menu"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/primary"
+              }
+            },
+            "mode": "button",
+            "path": "/user/hand/right/input/application_menu"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/trackpad_pressed"
+              },
+              "position": {
+                "output": "/actions/default/in/trackpad"
+              },
+              "touch": {
+                "output": "/actions/default/in/trackpad_touched"
+              }
+            },
+            "mode": "trackpad",
+            "path": "/user/hand/left/input/trackpad"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/trackpad_pressed"
+              },
+              "position": {
+                "output": "/actions/default/in/trackpad"
+              },
+              "touch": {
+                "output": "/actions/default/in/trackpad_touched"
+              }
+            },
+            "mode": "trackpad",
+            "path": "/user/hand/right/input/trackpad"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/trigger_pressed"
+              },
+              "pull": {
+                "output": "/actions/default/in/trigger"
+              }
+            },
+            "mode": "trigger",
+            "path": "/user/hand/left/input/trigger"
+          },
+          {
+            "inputs": {
+              "click": {
+                "output": "/actions/default/in/trigger_pressed"
+              },
+              "pull": {
+                "output": "/actions/default/in/trigger"
+              }
+            },
+            "mode": "trigger",
+            "path": "/user/hand/right/input/trigger"
+          }
+        ]
+      }
+   },
+   "category" : "steamvr_input",
+   "controller_type" : "vive_controller",
+   "description" : "Bindings for Vive controller",
+   "name" : "Default Bindings for Vive Controller",
+   "options" : {},
+   "simulated_actions" : []
+}

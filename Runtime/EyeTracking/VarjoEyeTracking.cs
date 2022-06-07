@@ -115,7 +115,8 @@ namespace Varjo.XR
         public enum GazeCalibrationMode
         {
             Legacy,
-            Fast
+            Fast,
+            OneDot
         }
 
         /// <summary>
@@ -248,8 +249,17 @@ namespace Varjo.XR
         public static bool RequestGazeCalibration(GazeCalibrationMode calibrationMode = GazeCalibrationMode.Fast)
         {
             string calibrationModeValue = "Fast";
-            if (calibrationMode == GazeCalibrationMode.Legacy)
+            switch (calibrationMode)
+            {
+            case GazeCalibrationMode.Legacy:
                 calibrationModeValue = "Legacy";
+                break;
+            case GazeCalibrationMode.OneDot:
+                calibrationModeValue = "OneDot";
+                break;
+            default:
+                break;
+            }
 
             Native.GazeCalibrationParameter[] parameters = new Native.GazeCalibrationParameter[] {
                 new Native.GazeCalibrationParameter { key = "GazeCalibrationType", value = calibrationModeValue } };

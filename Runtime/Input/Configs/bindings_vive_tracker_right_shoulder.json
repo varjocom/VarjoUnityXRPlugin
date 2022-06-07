@@ -1,0 +1,76 @@
+{
+  "action_manifest_version": 0,
+  "alias_info": {},
+  "bindings": {
+    "/actions/default": {
+      "poses": [
+        {
+          "output": "/actions/default/in/pose",
+          "path": "/user/shoulder/right/pose/raw"
+        }
+      ],
+      "sources": [
+        {
+          "inputs": {
+            "value": {
+              "output": "/actions/default/in/grip"
+            }
+          },
+          "mode": "scalar_constant",
+          "path": "/user/shoulder/right/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/default/in/grip_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/shoulder/right/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/default/in/primary"
+            }
+          },
+          "mode": "button",
+          "path": "/user/shoulder/right/input/application_menu"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/default/in/system"
+            }
+          },
+          "mode": "button",
+          "path": "/user/shoulder/right/input/power"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/default/in/trackpad_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/shoulder/right/input/thumb"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/default/in/trigger_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/shoulder/right/input/trigger"
+        }
+      ]
+    }
+  },
+  "category": "steamvr_input",
+  "controller_type": "vive_tracker_right_shoulder",
+  "description": "Bindings for SteamVR Trackers (Right Shoulder)",
+  "name": "Default Bindings for SteamVR Trackers (Right Shoulder)",
+  "options": {},
+  "simulated_actions": []
+}

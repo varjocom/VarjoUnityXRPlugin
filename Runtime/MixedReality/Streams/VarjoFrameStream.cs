@@ -1,24 +1,57 @@
 // Copyright 2019 Varjo Technologies Oy. All rights reserved.
 
 using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Varjo.XR
 {
     public abstract class VarjoFrameStream
     {
         private VarjoStreamConfig _config;
-
-        public bool isActive { get; internal set; }
-        public bool hasNewFrame { get; internal set; }
-        public ref readonly VarjoStreamConfig configRef => ref _config;
         protected readonly object mutex;
         private VarjoStreamCallback callback;
         private protected bool hasReceivedData;
+        private readonly int instanceIndex;
+
+
+        public ref readonly VarjoStreamConfig configRef => ref _config;
+        public bool isActive { get; internal set; }
+        public bool hasNewFrame { get; internal set; }
+
 
         protected VarjoFrameStream()
         {
             mutex = new object();
+
+            //search for free space in the streams:
+            lock (s_streamsInstances)
+            {
+                int length = s_streamsInstances.Count;
+                for (int i = 0; i < length; ++i)
+                {
+                    //insert reference to the instance in the list
+                    if (s_streamsInstances[i] == null)
+                    {
+                        s_streamsInstances[i] = this;
+                        instanceIndex = i;
+                        return;
+                    }
+                }
+                //if no free references available, insert in the end:
+                s_streamsInstances.Add(this);
+                instanceIndex = s_streamsInstances.Count - 1;
+            }
+        }
+        ~VarjoFrameStream()
+        {
+            lock (s_streamsInstances)
+            {
+                s_streamsInstances[instanceIndex] = null;
+
+                //trim empty space:
+                int lastActiveIndex = s_streamsInstances.FindLastIndex((VarjoFrameStream instance) => instance != null);
+                s_streamsInstances.RemoveRange(lastActiveIndex, s_streamsInstances.Count - lastActiveIndex);
+            }
         }
 
         /// <summary>
@@ -40,9 +73,9 @@ namespace Varjo.XR
             {
                 return true;
             }
-            callback = new VarjoStreamCallback(NewFrameCallback);
+            callback = s_NewFrameCallback;
             _config = VarjoMixedReality.GetStreamConfig(StreamType);
-            isActive = VarjoMixedReality.StartDataStream(StreamType, callback);
+            isActive = VarjoMixedReality.StartDataStream(StreamType, callback, (IntPtr)instanceIndex);
             if (!isActive)
             {
                 VarjoError.CheckError();
@@ -63,7 +96,16 @@ namespace Varjo.XR
             hasReceivedData = false;
         }
 
-        internal abstract void NewFrameCallback(VarjoStreamFrame data, IntPtr userdata);
+        internal abstract void NewFrameCallback(VarjoStreamFrame data);
         internal abstract VarjoStreamType StreamType { get; }
+
+
+        private static void s_NewFrameCallback(VarjoStreamFrame data, IntPtr userdata)
+        {
+            int instanceIndex = (int)userdata;
+            s_streamsInstances[instanceIndex].NewFrameCallback(data);
+        }
+
+        private static List<VarjoFrameStream> s_streamsInstances = new List<VarjoFrameStream>();
     }
 }

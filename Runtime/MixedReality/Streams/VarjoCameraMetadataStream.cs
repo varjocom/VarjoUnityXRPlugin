@@ -44,7 +44,7 @@ namespace Varjo.XR
             }
         }
 
-        internal override void NewFrameCallback(VarjoStreamFrame streamData, IntPtr userdata)
+        internal override void NewFrameCallback(VarjoStreamFrame streamData)
         {
             lock (mutex)
             {
