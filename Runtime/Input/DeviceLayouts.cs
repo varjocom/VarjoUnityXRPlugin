@@ -244,7 +244,7 @@ namespace Varjo.XR.Input
     /// <summary>
     /// A SteamVR tracker with buttons.
     /// </summary>
-    [Preserve, InputControlLayout(displayName = "SteamVR Tracker w/ Buttons (Varjo)")]
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker With Buttons (Varjo)")]
     public class VarjoSteamVRTrackerWithButtons : VarjoSteamVRTracker
     {
         [Preserve, InputControl]
@@ -282,8 +282,104 @@ namespace Varjo.XR.Input
     /// <summary>
     /// A handed SteamVR tracker.
     /// </summary>
-    [Preserve, InputControlLayout(displayName = "Handed SteamVR Tracker (Varjo)", commonUsages = new[] { "LeftHand", "RightHand" })]
-    public class VarjoHandedSteamVRTracker : VarjoSteamVRTrackerWithButtons
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Handed (Varjo)", commonUsages = new[] { "LeftHand", "RightHand" })]
+    public class VarjoSteamVRTrackerHanded : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Camera).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Camera (Varjo)")]
+    public class VarjoSteamVRTrackerCamera : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Chest).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Chest (Varjo)")]
+    public class VarjoSteamVRTrackerChest : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Keyboard).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Keyboard (Varjo)")]
+    public class VarjoSteamVRTrackerKeyboard : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Left Elbow).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Left Elbow (Varjo)")]
+    public class VarjoSteamVRTrackerLeftElbow : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Left Foot).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Left Foot (Varjo)")]
+    public class VarjoSteamVRTrackerLeftFoot : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Left Knee).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Left Knee (Varjo)")]
+    public class VarjoSteamVRTrackerLeftKnee : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Left Shoulder).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Left Shoulder (Varjo)")]
+    public class VarjoSteamVRTrackerLeftShoulder : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Right Elbow).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Right Elbow (Varjo)")]
+    public class VarjoSteamVRTrackerRightElbow : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Right Foot).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Right Foot (Varjo)")]
+    public class VarjoSteamVRTrackerRightFoot : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Right Knee).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Right Knee (Varjo)")]
+    public class VarjoSteamVRTrackerRightKnee : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Right Shoulder).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Right Shoulder (Varjo)")]
+    public class VarjoSteamVRTrackerRightShoulder : VarjoSteamVRTrackerWithButtons
+    {
+    }
+
+    /// <summary>
+    /// A SteamVR tracker (Waist).
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "SteamVR Tracker Waist (Varjo)")]
+    public class VarjoSteamVRTrackerWaist : VarjoSteamVRTrackerWithButtons
     {
     }
 }

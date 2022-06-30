@@ -54,15 +54,75 @@ namespace Varjo.XR
                     .WithManufacturer("Valve")
                     .WithProduct(@"(((SteamVR Controller \(Index Controller)).*)")
             );
-            InputSystem.RegisterLayout<VarjoSteamVRTrackerWithButtons>(
+               InputSystem.RegisterLayout<VarjoSteamVRTrackerWithButtons>(
                 matches: new InputDeviceMatcher()
                     .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
-                    .WithProduct("^(SteamVR Tracker).((?!Hand).)*$")
+                    .WithProduct(@"(SteamVR Tracker \((Undefined)\))")
             );
-            InputSystem.RegisterLayout<VarjoHandedSteamVRTracker>(
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerHanded>(
                 matches: new InputDeviceMatcher()
                     .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
                     .WithProduct(@"(SteamVR Tracker \(((Left)|(Right)).Hand\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerCamera>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Camera)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerChest>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Chest)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerKeyboard>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Keyboard)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerLeftElbow>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Left Elbow)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerLeftFoot>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Left Foot)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerLeftKnee>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Left Knee)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerLeftShoulder>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Left Shoulder)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerRightElbow>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Right Elbow)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerRightFoot>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Right Foot)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerRightKnee>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Right Knee)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerRightShoulder>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Right Shoulder)\))")
+            );
+            InputSystem.RegisterLayout<VarjoSteamVRTrackerWaist>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithProduct(@"(SteamVR Tracker \((Waist)\))")
             );
             InputSystem.RegisterLayout<VarjoSteamVRTracker>(
                 matches: new InputDeviceMatcher()

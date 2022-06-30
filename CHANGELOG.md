@@ -2,6 +2,16 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.1.1
+
+### Added
+
+- Device layouts for all supported SteamVR tracker roles
+
+### Fixed
+
+- Fixed memory layout of `VarjoEyeTracking.EyeMeasurements` structure
+
 ## 3.1.0
 
 Compatible with Varjo Base 3.6 or newer.
