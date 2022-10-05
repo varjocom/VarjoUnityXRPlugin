@@ -24,7 +24,7 @@ namespace Varjo.XR
     /// Varjo Channel Flags.
     /// </summary>
     [Flags]
-    public enum VarjoChannelFlags: ulong
+    public enum VarjoChannelFlags : ulong
     {
         None = 0,
         First = 1,
@@ -64,6 +64,15 @@ namespace Varjo.XR
         R8G8B8A8_UNORM = 9,
         R32_FLOAT = 10,
         NV12 = 13,
+    }
+
+    /// <summary>
+    /// Varjo environment cubemap modes.
+    /// </summary>
+    public enum VarjoEnvironmentCubemapMode : long
+    {
+        Fixed6500K = 0,
+        AutoAdapt = 1,
     }
 
     /// <summary>
@@ -149,7 +158,11 @@ namespace Varjo.XR
     [StructLayout(LayoutKind.Sequential)]
     internal struct VarjoEnvironmentCubemapData
     {
-        internal readonly long timestamp;     //!< Timestamp when the cubemap was last updated.
+        internal long timestamp;                           //!< Timestamp when the cubemap was last updated.
+        internal VarjoEnvironmentCubemapMode mode;         //!< Current cubemap mode.
+        internal double whiteBalanceTemperature;           //!< White balance temperature in Kelvin degrees.
+        internal double brightnessNormalizationGain;       //!< Normalization gain to convert cubemap brightness to match VST image.
+        internal WBNormalizationData wbNormalizationData;  //!< White balance normalization data.
     }
 
     [StructLayout(LayoutKind.Sequential)]

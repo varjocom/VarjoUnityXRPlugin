@@ -20,6 +20,11 @@ namespace Varjo.XR
         FlickerCompensation = 4,
         /** <summary>Sharpness filter mode.</summary> */
         Sharpness = 5,
+        /** <summary>Eye reprojection mode. This offers two modes:
+         * When mode is AUTO, the view is automatically reprojected based on the depth map.
+         * When mode is MANUAL, the view is reprojected into a certain static distance. Distance is controllable
+         * with the manual value.</summary> */
+        EyeReprojection = 6,
     }
 
     /// <summary>

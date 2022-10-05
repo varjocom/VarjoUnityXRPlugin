@@ -101,12 +101,16 @@ namespace Varjo.XR
             public float leftPupilDiameterInMM;
             /** <summary>Iris diameter estimate for the left eye, measured in mm. 0 if estimate is not available.</summary> */
             public float leftIrisDiameterInMM;
+            /** <summary>Openness ratio estimate for the left eye; 1 corresponds to a fully open eye and 0 to a fully closed eye.</summary> */
+            public float leftEyeOpenness;
             /** <summary>Ratio of rigth pupil diameter to iris diameter. 0 when either pupil or iris estimate is not available.</summary> */
             public float rightPupilIrisDiameterRatio;
             /** <summary>Pupil diameter estimate for the right eye, measured in mm. 0 if estimate is not available.</summary> */
             public float rightPupilDiameterInMM;
             /** <summary>Iris diameter estimate for the right eye, measured in mm. 0 if estimate is not available.</summary> */
             public float rightIrisDiameterInMM;
+            /** <summary>Openness ratio estimate for the right eye; 1 corresponds to a fully open eye and 0 to a fully closed eye.</summary> */
+            public float rightEyeOpenness;
         }
 
         /// <summary>
@@ -117,6 +121,15 @@ namespace Varjo.XR
             Legacy,
             Fast,
             OneDot
+        }
+
+        /// <summary>
+        /// Headset Alignment Guidance Mode
+        /// </summary>
+        public enum HeadsetAlignmentGuidanceMode
+        {
+            WaitForUserInputToContinue,
+            AutoContinueOnAcceptableHeadsetPosition
         }
 
         /// <summary>
@@ -245,26 +258,57 @@ namespace Varjo.XR
         /// where it can bring up the calibration UI.
         /// </remarks>
         /// <param name="calibrationMode">Gaze calibration mode.</param>
+        /// <param name="headsetAlignmentGuidanceMode">Headset alignment guidance mode.</param>
         /// <returns>True if gaze calibration was succesfully requested</returns>
-        public static bool RequestGazeCalibration(GazeCalibrationMode calibrationMode = GazeCalibrationMode.Fast)
+        public static bool RequestGazeCalibration(
+            GazeCalibrationMode calibrationMode = GazeCalibrationMode.Fast,
+            HeadsetAlignmentGuidanceMode headsetAlignmentGuidanceMode = HeadsetAlignmentGuidanceMode.WaitForUserInputToContinue)
         {
             string calibrationModeValue = "Fast";
             switch (calibrationMode)
             {
-            case GazeCalibrationMode.Legacy:
-                calibrationModeValue = "Legacy";
-                break;
-            case GazeCalibrationMode.OneDot:
-                calibrationModeValue = "OneDot";
-                break;
-            default:
-                break;
+                case GazeCalibrationMode.Legacy:
+                    calibrationModeValue = "Legacy";
+                    break;
+                case GazeCalibrationMode.OneDot:
+                    calibrationModeValue = "OneDot";
+                    break;
+                default:
+                    break;
+            }
+
+            string headsetAlignmentGuidanceModeValue = "WaitForUserInputToContinue";
+            switch (headsetAlignmentGuidanceMode)
+            {
+                case HeadsetAlignmentGuidanceMode.AutoContinueOnAcceptableHeadsetPosition:
+                    headsetAlignmentGuidanceModeValue = "AutoContinueOnAcceptableHeadsetPosition";
+                    break;
+                default:
+                    break;
             }
 
             Native.GazeCalibrationParameter[] parameters = new Native.GazeCalibrationParameter[] {
-                new Native.GazeCalibrationParameter { key = "GazeCalibrationType", value = calibrationModeValue } };
+                new Native.GazeCalibrationParameter { key = "GazeCalibrationType", value = calibrationModeValue },
+                new Native.GazeCalibrationParameter { key = "HeadsetAlignmentGuidanceMode", value = headsetAlignmentGuidanceModeValue }};
 
             Native.RequestGazeCalibrationWithParameters(parameters, parameters.Length);
+            return VarjoError.CheckError();
+        }
+
+        /// <summary>
+        /// Cancels currently active gaze calibration routine, if any, and resets gaze tracker to default state
+        /// </summary>
+        /// <remarks>
+        /// After this function has been called, any active gaze calibration user
+        /// interface will be closed. Last successful gaze calibration, if any, will
+        /// be reset. Gaze tracker will continue without calibration and may still
+        /// estimate gaze using "Best estimation without calibration" depending on
+        /// foveated rendering calibration mode currently selected in Varjo Base.
+        /// </remarks>
+        /// <returns>True if request for cancelling gaze calibration was succesfully made</returns>
+        public static bool CancelGazeCalibration()
+        {
+            Native.CancelGazeCalibration();
             return VarjoError.CheckError();
         }
 
@@ -360,6 +404,9 @@ namespace Varjo.XR
 
             [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
             public static extern void RequestGazeCalibrationWithParameters(GazeCalibrationParameter[] parameters, int parametersCount);
+
+            [DllImport("VarjoUnityXR", CharSet = CharSet.Auto)]
+            public static extern void CancelGazeCalibration();
         }
     }
 }

@@ -91,6 +91,55 @@ namespace Varjo.XR
         }
 
         /// <summary>
+        /// Try to lock the environment cubemap configuration.
+        /// This call needs to succeed before any calls altering the chroma key config state.
+        /// <see cref="UnlockEnvironmentCubemapConfig"/> should be called after the configuration has been changed.
+        /// </summary>
+        /// <remarks>
+        /// The configuration can be locked by one application at a time. Locking fails,
+        /// if another client has the configuration locked already.
+        /// </remarks>
+        /// <returns>True if locked successfully, otherwise False.</returns>
+        public static bool LockEnvironmentCubemapConfig()
+        {
+            return Native.LockEnvironmentCubemapConfig();
+        }
+
+        /// <summary>
+        /// Unlock a previously locked environment cubemap configuration.
+        /// </summary>
+        public static void UnlockEnvironmentCubemapConfig()
+        {
+            Native.UnlockEnvironmentCubemapConfig();
+        }
+
+        /// <summary>
+        /// Set environment cubemap mode.
+        /// </summary>
+        /// <remarks>
+        /// Set environment cubemap mode to decide how to do color correction in the application.
+        /// In Fixed6500K mode, cubemap is given in a fixed 6500K color temperature with values normalized to EV100.
+        /// This means application must perform proper color correction as a post process step to convert colors to match VST image.
+        /// In AutoAdapt mode, colors and brightness of the cubemap has been automatically adapted to match VST image.
+        /// Before calling this function, environment cubemap configuration has to be locked succesfully with <see cref="LockChromaKeyConfigs"/>
+        /// </remarks>
+        /// <param name="mode">Environment cubemap mode to apply.</param>
+        /// <returns>True if mode was successfully changed. Otherwise false.</returns>
+        public static bool SetEnvironmentCubemapMode(VarjoEnvironmentCubemapMode mode)
+        {
+            return Native.SetEnvironmentCubemapMode(mode);
+        }
+
+        /// <summary>
+        /// Get currently set environment cubemap mode.
+        /// </summary>
+        /// <returns>Currently set environment cubemap mode.</returns>
+        public static VarjoEnvironmentCubemapMode GetEnvironmentCubemapMode()
+        {
+            return Native.GetEnvironmentCubemapMode();
+        }
+
+        /// <summary>
         /// Change virtual camera rendering position between users eyes and video see through cameras.
         /// </summary>
         /// <remarks>
@@ -424,6 +473,22 @@ namespace Varjo.XR
 
             [DllImport("VarjoUnityXR")]
             public static extern bool SetDepthEstimation(bool enabled);
+
+            // Environment cubemap functions
+
+            [DllImport("VarjoUnityXR")]
+            public static extern bool LockEnvironmentCubemapConfig();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern void UnlockEnvironmentCubemapConfig();
+
+            [DllImport("VarjoUnityXR")]
+            public static extern bool SetEnvironmentCubemapMode(VarjoEnvironmentCubemapMode mode);
+
+            [DllImport("VarjoUnityXR")]
+            public static extern VarjoEnvironmentCubemapMode GetEnvironmentCubemapMode();
+
+            // Functions imported directly from VarjoLib
 
             [DllImport("VarjoLib", CharSet = CharSet.Auto)]
             public static extern void varjo_MRSetVideoRender(IntPtr session, bool enabled);

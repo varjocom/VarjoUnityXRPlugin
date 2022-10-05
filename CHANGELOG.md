@@ -2,6 +2,26 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.2.0
+
+### Added
+
+- Support for new environment cubemap mode
+- Support for blend control mask (D3D11 only)
+- Added new metadata to environment cubemap stream
+- Eye openness data to `VarjoEyeTracking.EyeMeasurements` structure
+- Added support for cancelling gaze calibration with
+  `VarjoEyeTracking.CancelGazeCalibration` function.
+- Added new `VarjoEyeTracking.HeadsetAlignmentGuidanceMode` option to
+  control whether gaze calibration user interface waits for input from
+  user (headset button press) before starting calibration sequence.
+- Added a new camera property to control the new eye reprojection feature.
+
+### Changed
+
+- Eye open amount data in `XR.Eyes` now uses actual eye openness tracking
+results instead of gaze availability
+
 ## 3.1.1
 
 ### Added
