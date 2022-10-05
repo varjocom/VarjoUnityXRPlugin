@@ -25,6 +25,7 @@ namespace Varjo.XR
         EVENT_MR_CAMERA_PROPERTY_CHANGE = 9,
         EVENT_DATA_STREAM_START = 10,
         EVENT_DATA_STREAM_STOP = 11,
+        EVENT_MR_CHROMA_KEY_CONFIG_CHANGE = 13,
     }
 
     /// <summary>
@@ -170,6 +171,9 @@ namespace Varjo.XR
         public delegate void DataStreamStopEvent(long streamId);
         public static event DataStreamStopEvent OnDataStreamStopEvent;
 
+        public delegate void MRChromaKeyConfigChangeEvent();
+        public static event MRChromaKeyConfigChangeEvent OnMRChromaKeyConfigChangeEvent;
+
         /// <summary>
         /// Poll Event.
         /// </summary>
@@ -305,6 +309,11 @@ namespace Varjo.XR
                     case EventType.EVENT_DATA_STREAM_STOP:
                         if (OnDataStreamStopEvent != null)
                             OnDataStreamStopEvent(GetEventDataStreamStop().streamId);
+                        break;
+
+                    case EventType.EVENT_MR_CHROMA_KEY_CONFIG_CHANGE:
+                        if (OnMRChromaKeyConfigChangeEvent != null)
+                            OnMRChromaKeyConfigChangeEvent();
                         break;
                 }
             }

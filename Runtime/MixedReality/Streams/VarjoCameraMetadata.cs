@@ -16,6 +16,62 @@ namespace Varjo.XR
         public Matrix4x4 invCCM;
         /** <summary>CCM for VST color temperature.</summary> */
         public Matrix4x4 ccm;
+
+        internal VarjoWBNormalizationData(WBNormalizationData data)
+        {
+            if (data.wbGains != null)
+            {
+                wbGains = new Color(
+                    (float)data.wbGains[0],
+                    (float)data.wbGains[1],
+                    (float)data.wbGains[2]
+                );
+            }
+
+            if (data.invCCM != null)
+            {
+                invCCM = new Matrix4x4(
+                    new Vector4(
+                        (float)data.invCCM[0],
+                        (float)data.invCCM[1],
+                        (float)data.invCCM[2],
+                        0.0f),
+                    new Vector4(
+                        (float)data.invCCM[3],
+                        (float)data.invCCM[4],
+                        (float)data.invCCM[5],
+                        0.0f),
+                    new Vector4(
+                        (float)data.invCCM[6],
+                        (float)data.invCCM[7],
+                        (float)data.invCCM[8],
+                        0.0f),
+                    new Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+                );
+            }
+
+            if (data.ccm != null)
+            {
+                ccm = new Matrix4x4(
+                    new Vector4(
+                        (float)data.ccm[0],
+                        (float)data.ccm[1],
+                        (float)data.ccm[2],
+                        0.0f),
+                    new Vector4(
+                        (float)data.ccm[3],
+                        (float)data.ccm[4],
+                        (float)data.ccm[5],
+                        0.0f),
+                    new Vector4(
+                        (float)data.ccm[6],
+                        (float)data.ccm[7],
+                        (float)data.ccm[8],
+                        0.0f),
+                    new Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+                );
+            }
+        }
     }
 
     /// <summary>
@@ -41,61 +97,7 @@ namespace Varjo.XR
             ev = data.ev;
             exposureTime = data.exposureTime;
             whiteBalanceTemperature = data.whiteBalanceTemperature;
-            wbNormalizationData = new VarjoWBNormalizationData();
-
-            if (data.wbNormalizationData.wbGains != null)
-            {
-                wbNormalizationData.wbGains = new Color(
-                    (float)data.wbNormalizationData.wbGains[0],
-                    (float)data.wbNormalizationData.wbGains[1],
-                    (float)data.wbNormalizationData.wbGains[2]
-                );
-            }
-
-            if (data.wbNormalizationData.invCCM != null)
-            {
-                wbNormalizationData.invCCM = new Matrix4x4(
-                    new Vector4(
-                        (float)data.wbNormalizationData.invCCM[0],
-                        (float)data.wbNormalizationData.invCCM[1],
-                        (float)data.wbNormalizationData.invCCM[2],
-                        0.0f),
-                    new Vector4(
-                        (float)data.wbNormalizationData.invCCM[3],
-                        (float)data.wbNormalizationData.invCCM[4],
-                        (float)data.wbNormalizationData.invCCM[5],
-                        0.0f),
-                    new Vector4(
-                        (float)data.wbNormalizationData.invCCM[6],
-                        (float)data.wbNormalizationData.invCCM[7],
-                        (float)data.wbNormalizationData.invCCM[8],
-                        0.0f),
-                    new Vector4(0.0f, 0.0f, 0.0f, 1.0f)
-                );
-            }
-
-            if (data.wbNormalizationData.ccm != null)
-            {
-                wbNormalizationData.ccm = new Matrix4x4(
-                    new Vector4(
-                        (float)data.wbNormalizationData.ccm[0],
-                        (float)data.wbNormalizationData.ccm[1],
-                        (float)data.wbNormalizationData.ccm[2],
-                        0.0f),
-                    new Vector4(
-                        (float)data.wbNormalizationData.ccm[3],
-                        (float)data.wbNormalizationData.ccm[4],
-                        (float)data.wbNormalizationData.ccm[5],
-                        0.0f),
-                    new Vector4(
-                        (float)data.wbNormalizationData.ccm[6],
-                        (float)data.wbNormalizationData.ccm[7],
-                        (float)data.wbNormalizationData.ccm[8],
-                        0.0f),
-                    new Vector4(0.0f, 0.0f, 0.0f, 1.0f)
-                );
-            }
-
+            wbNormalizationData = new VarjoWBNormalizationData(data.wbNormalizationData);
             cameraCalibrationConstant = data.cameraCalibrationConstant;
         }
     }

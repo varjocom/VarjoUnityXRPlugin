@@ -19,6 +19,8 @@ namespace Varjo.XR
             public long timestamp { get; internal set; }
             /** <summary>Environmental lighting cubemap.</summary> */
             public Cubemap cubemap { get; internal set; }
+            /** <summary>Cubemap metadata.</summary> */
+            public VarjoCubemapMetadata metadata { get; internal set; }
         }
 
         private VarjoEnvironmentCubemapData data;
@@ -44,6 +46,7 @@ namespace Varjo.XR
 
                 var frame = new VarjoEnvironmentCubemapFrame();
                 frame.timestamp = data.timestamp;
+                frame.metadata = new VarjoCubemapMetadata(data);
                 UpdateCubemap();
                 frame.cubemap = cubemap;
 

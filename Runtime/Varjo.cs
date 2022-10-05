@@ -13,6 +13,8 @@ namespace Varjo.XR
         public int minor;
         public int patch;
         public int build;
+
+        public override string ToString() => $"{major}.{minor}.{patch}.{build}";
     };
 
     public class Varjo

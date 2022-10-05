@@ -171,7 +171,7 @@ namespace Varjo.XR
         /// <returns>True if succeeded.</returns>
         public static bool RemoveVarjoMarkerFlags(long markerId, VarjoMarkerFlags flags)
         {
-            if (!RemoveVarjoMarkerFlags(markerId, flags))
+            if (!Native.RemoveVarjoMarkerFlags(markerId, flags))
             {
                 VarjoError.CheckError();
                 return false;
