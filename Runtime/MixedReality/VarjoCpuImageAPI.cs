@@ -191,8 +191,6 @@ namespace Varjo.XR
                         {
                             if (metadata.textureFormat == VarjoTextureFormat.NV12)
                                 colorStream.ConvertNV12ToRGBA32(buffer, in metadata, destinationBuffer, bufferLength);
-                            else if (metadata.textureFormat == VarjoTextureFormat.YUV422)
-                                colorStream.ConvertYUV422ToRGBA32(buffer, in metadata, destinationBuffer, bufferLength);
                             else
                                 throw new NotSupportedException($"Format \"{metadata.textureFormat}\" is not supported");
                         }

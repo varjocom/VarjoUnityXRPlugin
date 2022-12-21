@@ -2,7 +2,33 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.3.0
+
+Compatible with Varjo Base 3.8 or newer.
+
+### Added
+
+- Support for retrieving and controlling headset interpupillary distance
+  and its adjustment (see `VarjoHeadsetIPD` class)
+- Support for user presence status (`UnityEngine.XR.CommonUsages.userPresence`)
+- Support for getting current Varjo system timestamp (`VarjoTime.GetVarjoTimestamp`)
+  and support converting that timestamp to DateTime structure (`VarjoTime.ConvertVarjoTimestampToDateTime`)
+
+### Fixed
+
+- Fixed build post processing being performed when building for unsupported target platforms
+
+### Changed
+
+- Varjo VR-1, VR-2, VR-2 Pro and XR-1 Developer Edition are no longer supported (these devices are not supported with Varjo Base 3.8 or newer)
+
+### Removed
+
+- Removed YUV422 color stream conversion functions for XR-1 Developer Edition
+
 ## 3.2.0
+
+Compatible with Varjo Base 3.7 or newer.
 
 ### Added
 

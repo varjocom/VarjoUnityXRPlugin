@@ -1,10 +1,8 @@
 using System;
-
-using UnityEngine;
-using UnityEngine.XR.Management;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Varjo.XR
 {
@@ -201,9 +199,13 @@ namespace Varjo.XR
         public static GazeCalibrationQuality GetGazeCalibrationQuality() { return Native.GetGazeCalibrationQuality(); }
 
         /// <summary>
-        /// Get IPD distance estimate in millimeters.
+        /// Get estimate of user's interpupillary distance in millimeters.
         /// </summary>
-        /// <returns>IPD distance estimate in millimeters.</returns>
+        /// <remarks>
+        /// This is best effort estimation of physical distance between user's pupil centers.
+        /// Returned estimate may be outside of IPD range supported by the headset.
+        /// </remarks>
+        /// <returns>Estimate of user's IPD in millimeters or 0.0 if estimate is not ready or headset is not worn.</returns>
         public static double GetIPDEstimate() { return Native.GetIPDEstimate(); }
 
         /// <summary>

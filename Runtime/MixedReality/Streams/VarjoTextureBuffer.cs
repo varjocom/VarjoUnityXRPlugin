@@ -117,7 +117,7 @@ namespace Varjo.XR
                 case VarjoTextureFormat.A8_UNORM:
                     return TextureFormat.Alpha8;
                 case VarjoTextureFormat.YUV422:
-                    return TextureFormat.R8; // We extract only Y channel from the YUV422 for now.
+                    return TextureFormat.R8;
                 case VarjoTextureFormat.RGBA16_FLOAT:
                     return TextureFormat.RGBAHalf;
                 case VarjoTextureFormat.R8G8B8A8_UNORM:
@@ -164,17 +164,6 @@ namespace Varjo.XR
                     int destOffset = (height - srcRow - 1) * destRowStride;
                     Marshal.Copy(new IntPtr(srcOffset), data, destOffset, destRowStride);
                 }
-
-                // YUV422 contains a second plane for UV.
-                if (metadata.textureFormat == VarjoTextureFormat.YUV422)
-                {
-                    for (int srcRow = 0; srcRow < height; ++srcRow)
-                    {
-                        long srcOffset = cpuBuffer.ToInt64() + (srcRow + height) * rowStride;
-                        int destOffset = (2 * height - srcRow - 1) * destRowStride;
-                        Marshal.Copy(new IntPtr(srcOffset), data, destOffset, destRowStride);
-                    }
-                }
             }
             else
             {
@@ -197,8 +186,8 @@ namespace Varjo.XR
 
         private void LoadTextureData()
         {
-            // Extract Y from YUV422.
-            if ((metadata.textureFormat == VarjoTextureFormat.YUV422 || metadata.textureFormat == VarjoTextureFormat.NV12) && texture.format == TextureFormat.R8)
+            // Extract Y from NV12.
+            if (metadata.textureFormat == VarjoTextureFormat.NV12 && texture.format == TextureFormat.R8)
             {
                 // Allocate working buffer for y data.
                 if (yData == null || yData.Length != byteSize)

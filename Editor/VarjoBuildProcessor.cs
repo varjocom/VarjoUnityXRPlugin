@@ -77,6 +77,8 @@ namespace Varjo.XR.Editor
         {
             CleanOldSettings();
 
+            if (report.summary.platform != BuildTarget.StandaloneWindows64) return;
+
             // Copy the input config files into the StreamingAssets in the build directory after building the project.
             FileInfo buildPath = new FileInfo(report.summary.outputPath);
             string buildName = buildPath.Name.Replace(buildPath.Extension, "");

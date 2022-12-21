@@ -111,14 +111,6 @@ namespace Varjo.XR
             }
         }
 
-        internal void ConvertYUV422ToRGBA32(NativeArray<byte> cpuData, in VarjoBufferMetadata metadata, IntPtr destination, int destinationSize)
-        {
-            unsafe {
-                void* pdata = NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks<byte>(cpuData);
-                Native.MRConvertYUV422ToRGBA32((IntPtr)pdata, in metadata, destination, destinationSize);
-            }
-        }
-
         internal void GetYPlane(NativeArray<byte> cpuData, in VarjoBufferMetadata metadata, IntPtr destination, int destinationSize)
         {
             unsafe {
@@ -180,9 +172,6 @@ namespace Varjo.XR
 
             [DllImport("VarjoUnityXR")]
             public static extern void MRConvertNV12ToRGBA32(IntPtr cpuData, in VarjoBufferMetadata buffer, IntPtr destination, int destinationSize);
-
-            [DllImport("VarjoUnityXR")]
-            public static extern void MRConvertYUV422ToRGBA32(IntPtr cpuData, in VarjoBufferMetadata buffer, IntPtr destination, int destinationSize);
 
             [DllImport("VarjoUnityXR")]
             public static extern void MRGetYPlane(IntPtr cpuData, in VarjoBufferMetadata buffer, IntPtr destination, int destinationSize);

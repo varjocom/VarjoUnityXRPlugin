@@ -49,6 +49,8 @@ namespace Varjo.XR.Input
         [Preserve, InputControl(aliases = new[] { "Gaze" })]
         public EyesControl eyeGaze { get; private set; }
 
+        [Preserve, InputControl]
+        public new ButtonControl userPresence { get; private set; }
 
         protected override void FinishSetup()
         {
@@ -66,6 +68,7 @@ namespace Varjo.XR.Input
             centerEyeRotation = GetChildControl<QuaternionControl>("centerEyeRotation");
             applicationButton = GetChildControl<ButtonControl>("applicationButton");
             eyeGaze = GetChildControl<EyesControl>("eyeGaze");
+            userPresence = GetChildControl<ButtonControl>("userPresence");
         }
     }
 
