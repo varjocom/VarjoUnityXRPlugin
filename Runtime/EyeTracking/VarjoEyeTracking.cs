@@ -63,7 +63,7 @@ namespace Varjo.XR
             public GazeRay gaze;
             /** <summary>The distance between eye and focus point in meters. Values are between 0 and 2 meters.</summary> */
             public float focusDistance;
-            /** <summary>Stability of the user’s focus. Value are between 0.0 and 1.0, where 0.0 indicates least stable focus and 1.0 most stable.</summary> */
+            /** <summary>Stability of the user's focus. Value are between 0.0 and 1.0, where 0.0 indicates least stable focus and 1.0 most stable.</summary> */
             public float focusStability;
             /** <summary>A status for the left eye.</summary> */
             public GazeEyeStatus leftStatus;
@@ -242,14 +242,28 @@ namespace Varjo.XR
         /// <summary>
         /// Returns the latest gaze data frame.
         /// </summary>
+        /// <remarks>
+        /// Two calls to this function may return different results even within a single Unity engine frame.
+        /// </remarks>
         /// <returns>The latest gaze data frame.</returns>
-        public static GazeData GetGaze() { return Native.GetGaze(); }
+        public static GazeData GetGaze()
+        {
+            Native.FetchGazeData();
+            return Native.GetGaze();
+        }
 
         /// <summary>
         /// Returns the latest eye measurements.
         /// </summary>
+        /// <remarks>
+        /// Two calls to this function may return different results even within a single Unity engine frame.
+        /// </remarks>
         /// <returns>The latest eye measurements.</returns>
-        public static EyeMeasurements GetEyeMeasurements() { return Native.GetEyeMeasurements(); }
+        public static EyeMeasurements GetEyeMeasurements()
+        {
+            Native.FetchGazeData();
+            return Native.GetEyeMeasurements();
+        }
 
         /// <summary>
         /// Requests a HMD gaze calibration with provided parameters.

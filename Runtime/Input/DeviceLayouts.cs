@@ -50,7 +50,7 @@ namespace Varjo.XR.Input
         public EyesControl eyeGaze { get; private set; }
 
         [Preserve, InputControl]
-        public new ButtonControl userPresence { get; private set; }
+        public ButtonControl userPresence { get; private set; }
 
         protected override void FinishSetup()
         {

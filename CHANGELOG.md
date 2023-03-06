@@ -2,6 +2,17 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.4.0
+
+Compatible with Varjo Base 3.9 or newer.
+
+### Changed
+
+- Changed `VarjoEyeTracking.GetGaze` and `VarjoEyeTracking.GetEyeMeasurements`
+  to return the really latest available data instead of the last data frame in
+  the previous call to `VarjoEyeTracking.GetGazeList` or the previous Unity XR
+  Input update.
+
 ## 3.3.0
 
 Compatible with Varjo Base 3.8 or newer.
