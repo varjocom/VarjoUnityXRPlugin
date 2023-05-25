@@ -2,6 +2,16 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.5.0
+
+Compatible with Varjo Base 3.10 or newer.
+
+### Changed
+
+- Deprecated and removed support for Legacy 10-dot gaze calibration. Newer Fast
+  5-dot gaze calibration allows to achieve higher accuracy and precision.
+  Requesting Legacy 10-dot gaze calibration will trigger Fast 5-dot calibration.
+
 ## 3.4.0
 
 Compatible with Varjo Base 3.9 or newer.

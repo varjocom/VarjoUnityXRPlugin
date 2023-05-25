@@ -116,9 +116,11 @@ namespace Varjo.XR
         /// </summary>
         public enum GazeCalibrationMode
         {
-            Legacy,
             Fast,
-            OneDot
+            OneDot,
+
+            [Obsolete("Legacy calibration mode is no longer supported.")]
+            Legacy = Fast
         }
 
         /// <summary>
@@ -283,9 +285,6 @@ namespace Varjo.XR
             string calibrationModeValue = "Fast";
             switch (calibrationMode)
             {
-                case GazeCalibrationMode.Legacy:
-                    calibrationModeValue = "Legacy";
-                    break;
                 case GazeCalibrationMode.OneDot:
                     calibrationModeValue = "OneDot";
                     break;
