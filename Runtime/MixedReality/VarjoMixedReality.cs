@@ -84,6 +84,7 @@ namespace Varjo.XR
         /// </summary>
         public static void DisableDepthEstimation()
         {
+            if (!IsMRReady()) return;
             if (!Native.SetDepthEstimation(false))
             {
                 VarjoError.CheckError();
@@ -427,6 +428,12 @@ namespace Varjo.XR
         internal static bool StartDataStream(VarjoStreamType type, VarjoStreamCallback callback, IntPtr userdata)
         {
             if (!IsMRReady()) return false;
+            var customAttribs = callback.Method.CustomAttributes.Where(a => a.AttributeType.FullName.Equals("AOT.MonoPInvokeCallbackAttribute"));
+            if (customAttribs.Count() == 0)
+            {
+                Debug.LogError($"{callback.Method} is missing the [AOT.MonoPInvokeCallback] attribute");
+                return false;
+            }
             return Native.MRStartDataStream(type, callback, userdata);
         }
 

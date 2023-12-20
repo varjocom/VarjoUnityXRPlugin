@@ -2,6 +2,26 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.6.0
+
+Compatible with Varjo Base 4.0 or newer.
+
+### Added
+
+ - Support for Varjo Controllers
+ - Support for XR-4
+ - Added Varjo.XR.AutoExposureBehavior property
+
+### Changed
+
+ - Upgrade to oldest currently supported Unity LTS version 2021.3
+  - Upgrade com.unity.xr.management dependency to 4.4.0
+  - Upgrade com.unity.xr.arfoundation dependency to 5.1.0
+
+### Fixed
+
+ - Fixed Native-To-Managed callbacks for VarjoMixedReality.StartDataStream missing MonoPInvokeCallback attribute
+
 ## 3.5.0
 
 Compatible with Varjo Base 3.10 or newer.

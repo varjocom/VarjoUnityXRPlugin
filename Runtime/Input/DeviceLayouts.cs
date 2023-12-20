@@ -73,6 +73,76 @@ namespace Varjo.XR.Input
     }
 
     /// <summary>
+    /// A Varjo controller.
+    /// </summary>
+    [Preserve, InputControlLayout(displayName = "Varjo Controller", commonUsages = new[] { "LeftHand", "RightHand" })]
+    public class VarjoController : XRControllerWithRumble
+    {
+        [Preserve, InputControl]
+        public ButtonControl gripPressed { get; private set; }
+
+        [Preserve, InputControl]
+        public ButtonControl primary { get; private set; }
+
+        [Preserve, InputControl]
+        public ButtonControl primaryTouched { get; private set; }
+
+        [Preserve, InputControl]
+        public ButtonControl secondary { get; private set; }
+
+        [Preserve, InputControl]
+        public ButtonControl secondaryTouched { get; private set; }
+
+        [Preserve, InputControl(aliases = new[] { "Primary2DAxis", "joystick" })]
+        public Vector2Control thumbstick { get; private set; }
+
+        [Preserve, InputControl(aliases = new[] { "Primary2DAxisClick", "joystickClicked" })]
+        public ButtonControl thumbstickPressed { get; private set; }
+
+        [Preserve, InputControl(aliases = new[] { "Primary2DAxisTouch", "joystickTouched" })]
+        public ButtonControl thumbstickTouched { get; private set; }
+
+        [Preserve, InputControl]
+        public AxisControl trigger { get; private set; }
+
+        [Preserve, InputControl]
+        public ButtonControl triggerPressed { get; private set; }
+
+        [Preserve, InputControl]
+        public ButtonControl triggerTouched { get; private set; }
+
+        [Preserve, InputControl(noisy = true)]
+        public Vector3Control deviceVelocity { get; private set; }
+
+        [Preserve, InputControl(noisy = true)]
+        public Vector3Control deviceAngularVelocity { get; private set; }
+
+        [Preserve, InputControl(noisy = true)]
+        public AxisControl batteryLevel { get; private set; }
+
+        protected override void FinishSetup()
+        {
+            base.FinishSetup();
+
+            gripPressed = GetChildControl<ButtonControl>("gripPressed");
+            primary = GetChildControl<ButtonControl>("primary");
+            primaryTouched = GetChildControl<ButtonControl>("primaryTouched");
+            secondary = GetChildControl<ButtonControl>("secondary");
+            secondaryTouched = GetChildControl<ButtonControl>("secondaryTouched");
+            thumbstickPressed = GetChildControl<ButtonControl>("thumbstickPressed");
+            thumbstickTouched = GetChildControl<ButtonControl>("thumbstickTouched");
+            thumbstick = GetChildControl<Vector2Control>("thumbstick");
+            trigger = GetChildControl<AxisControl>("trigger");
+            triggerPressed = GetChildControl<ButtonControl>("triggerPressed");
+            triggerTouched = GetChildControl<ButtonControl>("triggerTouched");
+
+            deviceVelocity = GetChildControl<Vector3Control>("deviceVelocity");
+            deviceAngularVelocity = GetChildControl<Vector3Control>("deviceAngularVelocity");
+            batteryLevel = GetChildControl<AxisControl>("batteryLevel");
+        }
+    }
+
+    /// <summary>
     /// A Valve Index controller.
     /// </summary>
     [Preserve, InputControlLayout(displayName = "Index Controller (Varjo)", commonUsages = new[] { "LeftHand", "RightHand" })]

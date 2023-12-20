@@ -46,11 +46,17 @@ namespace Varjo.XR
         {
             lock (s_streamsInstances)
             {
-                s_streamsInstances[instanceIndex] = null;
+                if (s_streamsInstances.Count > instanceIndex)
+                {
+                    s_streamsInstances[instanceIndex] = null;                
+                }
 
                 //trim empty space:
                 int lastActiveIndex = s_streamsInstances.FindLastIndex((VarjoFrameStream instance) => instance != null);
-                s_streamsInstances.RemoveRange(lastActiveIndex, s_streamsInstances.Count - lastActiveIndex);
+                if (lastActiveIndex > -1)
+                {
+                    s_streamsInstances.RemoveRange(lastActiveIndex, s_streamsInstances.Count - lastActiveIndex);
+                }
             }
         }
 
@@ -99,7 +105,7 @@ namespace Varjo.XR
         internal abstract void NewFrameCallback(VarjoStreamFrame data);
         internal abstract VarjoStreamType StreamType { get; }
 
-
+        [AOT.MonoPInvokeCallback(typeof(VarjoFrameStream))]
         private static void s_NewFrameCallback(VarjoStreamFrame data, IntPtr userdata)
         {
             int instanceIndex = (int)userdata;

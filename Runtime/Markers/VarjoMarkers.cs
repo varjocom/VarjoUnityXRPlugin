@@ -93,6 +93,7 @@ namespace Varjo.XR
         /// <returns>True if markers is enabled.</returns>
         public static bool EnableVarjoMarkers(bool enabled)
         {
+            if (!VarjoMixedReality.IsMRReady()) return false;
             if (!Native.EnableVarjoMarkers(enabled))
             {
                 VarjoError.CheckError();

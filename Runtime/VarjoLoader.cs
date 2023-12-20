@@ -42,6 +42,12 @@ namespace Varjo.XR
                     .WithManufacturer("Varjo")
                     .WithProduct("^(XR-|VR-|AERO).*$")
             );
+            InputSystem.RegisterLayout<VarjoController>(
+                matches: new InputDeviceMatcher()
+                    .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
+                    .WithManufacturer("Varjo")
+                    .WithProduct(@"(((Varjo Controller)).*)")
+            );
             InputSystem.RegisterLayout<VarjoViveWand>(
                 matches: new InputDeviceMatcher()
                     .WithInterface(XRUtilities.InterfaceMatchAnyVersion)
@@ -154,7 +160,7 @@ namespace Varjo.XR
 
         public override bool Initialize()
         {
-            if(!Varjo.IsVarjoSystemInstalled())
+            if (!Varjo.IsVarjoSystemInstalled())
             {
                 return false;
             }

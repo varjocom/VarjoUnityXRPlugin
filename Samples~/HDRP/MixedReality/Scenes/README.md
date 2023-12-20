@@ -3,7 +3,7 @@
 This example shows how to use mixed reality features and real world reflections and lighting for virtual content.
 In Post Process Volume there is VST white balance override that matches the exposure intensity to match exposure used by VST cameras. This makes the scene look more natural.
 
-Note: To make the custom post process effect work, you have to enable it in Project Settings -> HDRP Default Settings -> Custom Post Process Orders -> After Post Process.
+Note: To make the custom post process effect work, you have to enable it in Project Settings -> Graphics ->HDRP Global Settings -> Custom Post Process Orders -> After Post Process.
 
 When real world reflections are enabled (3) the chrome sphere shows how much of the real world environment cube is captured. By looking around you can fill the missing parts.
 

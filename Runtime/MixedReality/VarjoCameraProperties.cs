@@ -25,6 +25,8 @@ namespace Varjo.XR
          * When mode is MANUAL, the view is reprojected into a certain static distance. Distance is controllable
          * with the manual value.</summary> */
         EyeReprojection = 6,
+        /** <summary>Auto exposure behavior. See VarjoAutoExposureBehavior for available values.</summary> */
+        AutoExposureBehavior = 7,
     }
 
     /// <summary>
@@ -93,4 +95,16 @@ namespace Varjo.XR
         [FieldOffset(8)]
         public int boolValue;
     }
+
+    /// <summary>
+    /// Available options for VarjoCameraPropertyType.AutoExposureBehavior property.
+    /// </summary>
+    public enum VarjoAutoExposureBehavior : long
+    {
+        /** <summary>Normal (legacy) auto exposure behavior.</summary> */
+        Default = 0,
+        /** <summary>More aggressive behavior to prevent any oversaturation in the image.
+         * Good for example for ensuring that even small displays stay readable.</summary> */
+        PreventOverexposure = 1,
+    };
 }
