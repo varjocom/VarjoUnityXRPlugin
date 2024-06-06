@@ -459,7 +459,11 @@ namespace Varjo.XR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
+#if UNITY_6000_0_OR_NEWER
+            XRCameraSubsystemDescriptor.Register(new XRCameraSubsystemDescriptor.Cinfo()
+#else
             XRCameraSubsystem.Register(new XRCameraSubsystemCinfo()
+#endif
             {
                 id = VarjoCameraID,
                 providerType = typeof(VarjoCameraProvider),

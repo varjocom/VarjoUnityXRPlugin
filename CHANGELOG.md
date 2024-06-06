@@ -2,6 +2,14 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.7.0
+
+Compatible with Varjo Base 4.3 or newer.
+Add preliminary support for Unity 6.0 or newer
+
+- Upgrade com.unity.xr.arfoundation dependency to 5.1.3
+- Compatible with com.unity.xr.arfoundation 6.0.0
+
 ## 3.6.0
 
 Compatible with Varjo Base 4.0 or newer.

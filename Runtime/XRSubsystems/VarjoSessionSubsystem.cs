@@ -36,7 +36,11 @@ namespace Varjo.XR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
+#if UNITY_6000_0_OR_NEWER
+            XRSessionSubsystemDescriptor.Register(new XRSessionSubsystemDescriptor.Cinfo()
+#else
             XRSessionSubsystemDescriptor.RegisterDescriptor(new XRSessionSubsystemDescriptor.Cinfo()
+#endif
             {
                 supportsInstall = false,
                 supportsMatchFrameRate = false,

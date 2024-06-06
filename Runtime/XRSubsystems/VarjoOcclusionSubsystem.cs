@@ -21,7 +21,12 @@ namespace Varjo.XR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
-            XROcclusionSubsystem.Register(new XROcclusionSubsystemCinfo() {
+#if UNITY_6000_0_OR_NEWER
+            XROcclusionSubsystemDescriptor.Register(new XROcclusionSubsystemDescriptor.Cinfo() 
+#else
+            XROcclusionSubsystem.Register(new XROcclusionSubsystemCinfo()
+#endif
+            {
                 id = VarjoOcclusionID,
                 providerType = typeof(VarjoOcclusionProvider),
                 subsystemTypeOverride = typeof(VarjoOcclusionSubsystem)
