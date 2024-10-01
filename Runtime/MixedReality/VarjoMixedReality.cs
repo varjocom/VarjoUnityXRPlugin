@@ -429,7 +429,7 @@ namespace Varjo.XR
         {
             if (!IsMRReady()) return false;
             var customAttribs = callback.Method.CustomAttributes.Where(a => a.AttributeType.FullName.Equals("AOT.MonoPInvokeCallbackAttribute"));
-            if (customAttribs.Count() == 0)
+            if (customAttribs.Any())
             {
                 Debug.LogError($"{callback.Method} is missing the [AOT.MonoPInvokeCallback] attribute");
                 return false;
