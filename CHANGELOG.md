@@ -2,6 +2,20 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.7.2
+
+Compatible with Varjo Base 4.5 or newer.
+
+### Added
+
+  - Support for changing Focus Distance property via VarjoCameraPropertyType.FocusDistance
+
+## 3.7.1
+
+Compatible with Varjo Base 4.4 or newer.
+
+- Stability and error reporting improvements
+
 ## 3.7.0
 
 Compatible with Varjo Base 4.3 or newer.

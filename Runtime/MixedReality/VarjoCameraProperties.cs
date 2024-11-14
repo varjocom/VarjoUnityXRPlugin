@@ -27,6 +27,8 @@ namespace Varjo.XR
         EyeReprojection = 6,
         /** <summary>Auto exposure behavior. See VarjoAutoExposureBehavior for available values.</summary> */
         AutoExposureBehavior = 7,
+        /** <summary>Set focus distance in cm for AF cameras.</summary> */
+        FocusDistance = 8,
     }
 
     /// <summary>
