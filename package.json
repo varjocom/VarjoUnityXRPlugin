@@ -1,8 +1,8 @@
 {
   "name": "com.varjo.xr",
   "displayName": "Varjo XR Plugin",
-  "version": "3.7.3",
-  "unity": "2021.3",
+  "version": "3.7.4",
+  "unity": "6000.3",
   "description": "Provides support for Varjo devices using the Unity XR SDK.",
   "documentationUrl": "https://developer.varjo.com/docs/unity-xr-sdk/unity-xr-sdk",
   "license": "See LICENSE.md file.",
@@ -23,8 +23,13 @@
     "url": "https://github.com/varjocom/VarjoUnityXRPlugin.git"
   },
   "samples": [
+  {
+      "displayName": "URP Samples",
+      "description": "Sample scenes showing how to use different Varjo XR Plugin features with URP.",
+      "path": "Samples~/URP"
+    },
     {
-      "displayName": "HDRP Samples",
+      "displayName": "HDRP Samples (depracated)",
       "description": "Sample scenes showing how to use different Varjo XR Plugin features with HDRP.",
       "path": "Samples~/HDRP"
     }

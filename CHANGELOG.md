@@ -2,6 +2,18 @@
 
 All notable changes to this package are documented in this file.
 
+## 3.7.4
+
+Compatible with Varjo Base 4.6 or newer.
+
+### Added
+
+ - Added URP samples.
+ 
+### Changed
+ 
+ - Upgrade to oldest currently supported Unity LTS version 6.3.
+
 ## 3.7.3
 
 Compatible with Varjo Base 4.6 or newer.
